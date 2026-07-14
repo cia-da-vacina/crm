@@ -9,6 +9,17 @@ import StyledComponentsRegistry from "@/lib/styled-components-registry";
 
 async function enableMocking() {
   if (process.env.NEXT_PUBLIC_USE_MOCKS !== "true") return;
+
+  // Drop a previous next-pwa worker so it does not steal /api fetches from MSW.
+  if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+    const regs = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(
+      regs
+        .filter((r) => !r.active?.scriptURL.includes("mockServiceWorker"))
+        .map((r) => r.unregister()),
+    );
+  }
+
   const { worker } = await import("@/mocks/browser");
   await worker.start({
     onUnhandledRequest: "bypass",
