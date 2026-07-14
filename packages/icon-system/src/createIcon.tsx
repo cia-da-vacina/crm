@@ -22,6 +22,7 @@ export type IconSizeToken = keyof typeof iconSizes;
 export type IconProps = SpaceProps &
   ColorProps & {
     size?: IconSizeToken;
+    /** Theme color token or CSS color; applied as stroke (Untitled UI / Sencon style). */
     fill?: string;
     className?: string;
     title?: string;
@@ -39,6 +40,12 @@ const Svg = styled.svg.withConfig({
   max-height: ${({ $px }) => $px}px;
   ${space}
   ${color}
+
+  /* Sencon parity: force stroke icons, never filled blobs */
+  & * {
+    fill: none !important;
+    stroke: inherit;
+  }
 `;
 
 export function createIcon(displayName: string, path: ReactNode) {
@@ -49,14 +56,14 @@ export function createIcon(displayName: string, path: ReactNode) {
         $px={px}
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
-        fill="none"
-        stroke={fill}
-        strokeWidth={1.75}
-        strokeLinecap="round"
-        strokeLinejoin="round"
         width={px}
         height={px}
         aria-hidden
+        // Resolve theme tokens via styled-system (`stroke` scale → colors)
+        stroke={fill}
+        strokeWidth={2}
+        strokeLinecap="round"
+        strokeLinejoin="round"
         {...rest}
       >
         {path}

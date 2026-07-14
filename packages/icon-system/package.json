@@ -18,9 +18,11 @@
     "dist"
   ],
   "scripts": {
+    "import:sencon": "node scripts/import-sencon-icons.mjs",
     "build": "tsup src/index.ts --format esm,cjs --dts --clean --external react --external styled-components --external @cia-da-vacina/styled-system",
     "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "prepare": "npm run build"
   },
   "peerDependencies": {
     "@cia-da-vacina/styled-system": ">=0.1.0",
@@ -28,7 +30,7 @@
     "styled-components": ">=6"
   },
   "devDependencies": {
-    "@cia-da-vacina/styled-system": "*",
+    "@cia-da-vacina/styled-system": "github:cia-da-vacina/styled-system#main",
     "@types/react": "^19.1.8",
     "react": "^19.1.0",
     "styled-components": "^6.4.3",
