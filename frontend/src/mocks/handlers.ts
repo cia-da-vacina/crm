@@ -13,7 +13,8 @@ import {
 } from "./store";
 import type { PipelineStage, User } from "@/lib/types";
 
-const API = "http://localhost:8080/api/v1";
+/** Match any host so prod (Vercel) and local share the same handlers. */
+const API = "*/api/v1";
 
 function currentUser(auth: string | null) {
   return auth?.includes("admin") ? mockAdmin : mockAgent;

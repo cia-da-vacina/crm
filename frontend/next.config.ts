@@ -7,7 +7,10 @@ const frontendModules = path.resolve(__dirname, "node_modules");
 const withPWA = withPWAInit({
   dest: "public",
   register: true,
-  disable: process.env.NODE_ENV === "development",
+  // MSW + next-pwa both use service workers; keep PWA off while mocks own the SW.
+  disable:
+    process.env.NODE_ENV === "development" ||
+    process.env.NEXT_PUBLIC_USE_MOCKS === "true",
   fallbacks: {
     document: "/~offline",
   },

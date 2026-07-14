@@ -10,7 +10,13 @@ import StyledComponentsRegistry from "@/lib/styled-components-registry";
 async function enableMocking() {
   if (process.env.NEXT_PUBLIC_USE_MOCKS !== "true") return;
   const { worker } = await import("@/mocks/browser");
-  await worker.start({ onUnhandledRequest: "bypass" });
+  await worker.start({
+    onUnhandledRequest: "bypass",
+    quiet: true,
+    serviceWorker: {
+      url: "/mockServiceWorker.js",
+    },
+  });
 }
 
 export function Providers({ children }: { children: ReactNode }) {

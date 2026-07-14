@@ -1,4 +1,5 @@
 import { getAccessToken } from "./auth-storage";
+import { API_BASE } from "./api-base";
 import type {
   DashboardSummary,
   FollowUp,
@@ -13,8 +14,6 @@ import type {
   User,
   WhatsAppSettings,
 } from "./types";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080/api/v1";
 
 export class ApiError extends Error {
   constructor(
