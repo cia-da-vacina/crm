@@ -1,0 +1,34 @@
+ID,Name,Description,Owner,Dependencies,Acceptance_Criteria,Estimate_Hours,Priority
+T-001,Setup Go module,Module config health structured logging,Felipe,,Health returns 200; logs JSON with request_id,6,P0
+T-002,Postgres schema base,users units user_units + migrate tool,Felipe,T-001,Migrations apply clean; seed 5 units,8,P0
+T-003,Auth JWT RBAC,Login refresh logout middleware roles,Felipe,T-002,Valid login returns tokens; inactive blocked; RBAC enforces roles,10,P0
+T-004,CRUD users units,Admin CRUD + assign user to units,Felipe,T-003,CRUD works; scope user_units enforced,10,P0
+T-005,App shell Next.js,Auth pages and route guards,Cristian,T-007,Login redirects to inbox; unauthenticated blocked,10,P0
+T-006,App layout,Nav unit switcher design tokens,Cristian,T-005,Unit switcher visible; responsive shell,8,P0
+T-007,OpenAPI v0 + MSW mocks,Contract auth inbox messages claim pipeline,Both,,OpenAPI committed; FE mocks cover auth and inbox,8,P0
+T-010,WhatsApp webhook ingest,Verify webhook + idempotent message ingest,Felipe,T-002,Duplicate wamid ignored; contact/conversation created,10,P0
+T-011,Contacts conversations messages repos,Domain models and repositories,Felipe,T-010,CRUD repos with tests for upsert contact,10,P0
+T-012,Send WhatsApp text,Graph API send + status updates,Felipe,T-011,Outbound message persisted; statuses updated,10,P0
+T-013,Templates send,Send approved template outside 24h window,Felipe,T-012,Outside window free-form rejected; template allowed,8,P0
+T-014,Inbox query,Filters pagination by unit stage owner,Felipe,T-011,Filters return correct scoped rows,8,P0
+T-015,Inbox UI,List + conversation thread,Cristian,T-007,List and thread render with mock/real data,12,P0
+T-016,Composer,Send loading error 24h window UX,Cristian,T-015,Shows template gate when window expired,10,P0
+T-017,WhatsApp settings API,Admin get/put Meta config,Felipe,T-003,Secrets masked on GET,6,P0
+T-018,WhatsApp settings UI,Admin form mask secrets,Cristian,T-017,Secrets never shown in clear after save,6,P0
+T-020,AI triage service,Prompt intent summary max turns,Felipe,T-012,AI responds up to 3 turns; sets intent/summary,12,P0
+T-021,AI fallback kill-switch,Fallback without LLM + config flags,Felipe,T-020,With AI disabled conversation goes to human queue,6,P0
+T-022,Claim assign handoff,Claim assign 409 conflicts,Felipe,T-014,Claim sets owner mode human; conflict 409,8,P0
+T-023,Handoff UI,AI/human banner + Assumir button,Cristian,T-022,Claim updates UI mode immediately,6,P0
+T-024,AI summary panel,Show intent and AI summary,Cristian,T-020,Panel shows intent/summary when present,6,P0
+T-030,Pipeline patch,Transitions + loss reasons API,Felipe,T-022,nao_fechado requires reason; history stored,8,P0
+T-031,Stage selector UI,Stage + reason modal,Cristian,T-030,Modal blocks submit without reason on nao_fechado,8,P0
+T-032,Follow-ups CRUD job,CRUD + due job notifier,Felipe,T-030,Due followups listed; job marks notify,8,P1
+T-033,Follow-up queue UI,Filters unit stage reason,Cristian,T-032,Filters work; mark done,8,P1
+T-040,POPs CRUD insert,BE CRUD + FE picker insert composer,Both,T-016,Insert puts editable text in composer,16,P1
+T-041,Dashboard summary SQL,KPIs by unit and consolidated,Felipe,T-030,Returns stage counts and conversion,8,P1
+T-042,Dashboard UI,Unit + consolidated cards,Cristian,T-041,Period filter updates KPIs,10,P1
+T-043,Audit log,Writer + admin list,Felipe,T-003,Critical actions audited,6,P1
+T-044,SSE events,BE hub + FE subscribe,Both,T-014,New message event refreshes thread,16,P1
+T-045,Search contacts conversations,Search by name phone,Both,T-014,Query returns matches scoped by unit,12,P2
+T-046,QA WhatsApp sandbox e2e,Checklist sandbox send receive claim pipeline,Both,T-022,Checklist signed off,8,P0
+T-047,LGPD retention backups doc,Retention policy + backup runbook,Felipe,T-002,Docs and config key for retention,6,P1

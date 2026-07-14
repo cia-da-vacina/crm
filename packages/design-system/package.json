@@ -1,0 +1,52 @@
+{
+  "name": "@cia-da-vacina/design-system",
+  "version": "0.1.0",
+  "description": "React core UI for Cia da Vacina CRM",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean --external react --external react-dom --external styled-components --external @cia-da-vacina/styled-system --external @cia-da-vacina/design-system-tokens --external @cia-da-vacina/icon-system",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "@cia-da-vacina/design-system-tokens": ">=0.1.0",
+    "@cia-da-vacina/icon-system": ">=0.1.0",
+    "@cia-da-vacina/styled-system": ">=0.1.0",
+    "react": ">=18",
+    "react-dom": ">=18",
+    "styled-components": ">=6"
+  },
+  "devDependencies": {
+    "@cia-da-vacina/design-system-tokens": "*",
+    "@cia-da-vacina/icon-system": "*",
+    "@cia-da-vacina/styled-system": "*",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "styled-components": "^6.4.3",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cia-da-vacina/design-system.git"
+  }
+}

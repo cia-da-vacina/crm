@@ -1,0 +1,33 @@
+# Dependencies / build
+node_modules/
+frontend/node_modules/
+packages/*/node_modules/
+frontend/.next/
+frontend/out/
+backend/bin/
+*.exe
+dist/
+packages/*/dist/
+
+# Env
+.env
+.env.local
+!.env.example
+!**/.env.example
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Go
+vendor/
+
+# PWA generated
+frontend/public/sw.js
+frontend/public/sw.js.map
+frontend/public/workbox-*.js
+frontend/public/workbox-*.js.map
+frontend/public/swe-worker-*.js
+frontend/public/swe-worker-*.js.map

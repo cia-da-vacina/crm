@@ -1,0 +1,690 @@
+openapi: 3.0.3
+info:
+  title: CRM Cia da Vacina API
+  version: 0.1.0
+  description: |
+    Contrato Sprint 1+ — Auth, Users, Units, Me.
+    Endpoints de Inbox/WhatsApp entram nas sprints seguintes mantendo este estilo.
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local API
+tags:
+  - name: Auth
+  - name: Users
+  - name: Units
+  - name: Me
+  - name: Inbox
+  - name: Conversations
+  - name: Meta
+
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login com email e senha
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Autenticado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          description: Usuário inativo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout (invalida refresh no servidor se persistido)
+      operationId: logout
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Sem conteúdo
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Renovar access token
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token:
+                  type: string
+      responses:
+        '200':
+          description: Novo par de tokens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /me:
+    get:
+      tags: [Me]
+      summary: Perfil do usuário autenticado + unidades
+      operationId: getMe
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Perfil
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MeResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /users:
+    get:
+      tags: [Users]
+      summary: Listar usuários
+      operationId: listUsers
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  total:
+                    type: integer
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags: [Users]
+      summary: Criar usuário
+      operationId: createUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: Criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /users/{userId}:
+    get:
+      tags: [Users]
+      summary: Obter usuário
+      operationId: getUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [Users]
+      summary: Atualizar usuário
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /users/{userId}/units:
+    put:
+      tags: [Users]
+      summary: Substituir vínculo do usuário com unidades
+      operationId: setUserUnits
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [unit_ids]
+              properties:
+                unit_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        '204':
+          description: Atualizado
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /units:
+    get:
+      tags: [Units]
+      summary: Listar unidades
+      operationId: listUnits
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Unit'
+    post:
+      tags: [Units]
+      summary: Criar unidade
+      operationId: createUnit
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUnitRequest'
+      responses:
+        '201':
+          description: Criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unit'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /units/{unitId}:
+    get:
+      tags: [Units]
+      summary: Obter unidade
+      operationId: getUnit
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UnitId'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unit'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [Units]
+      summary: Atualizar unidade
+      operationId: updateUnit
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/UnitId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUnitRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unit'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /health:
+    get:
+      tags: [Meta]
+      summary: Healthcheck
+      operationId: health
+      servers:
+        - url: http://localhost:8080
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+
+  /inbox:
+    get:
+      tags: [Inbox]
+      summary: Lista conversas do inbox (contrato antecipado p/ FE mocks)
+      operationId: listInbox
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: unit_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: stage
+          in: query
+          schema:
+            $ref: '#/components/schemas/PipelineStage'
+        - name: owner
+          in: query
+          description: me | unassigned | UUID
+          schema:
+            type: string
+        - name: cursor
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 30
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InboxItem'
+                  next_cursor:
+                    type: string
+                    nullable: true
+
+  /conversations/{conversationId}/claim:
+    post:
+      tags: [Conversations]
+      summary: Atendente assume a conversa (handoff)
+      operationId: claimConversation
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ConversationId'
+      responses:
+        '200':
+          description: Claimed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InboxItem'
+        '409':
+          description: Já atribuída a outro
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /conversations/{conversationId}/pipeline:
+    patch:
+      tags: [Conversations]
+      summary: Atualiza etapa do pipeline
+      operationId: updatePipeline
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ConversationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [stage]
+              properties:
+                stage:
+                  $ref: '#/components/schemas/PipelineStage'
+                reason_code:
+                  type: string
+                reason_text:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InboxItem'
+        '422':
+          description: Motivo obrigatório para nao_fechado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    UserId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    UnitId:
+      name: unitId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ConversationId:
+      name: conversationId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        default: 1
+    PageSize:
+      name: page_size
+      in: query
+      schema:
+        type: integer
+        default: 20
+
+  responses:
+    BadRequest:
+      description: Validação
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Não autenticado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Sem permissão
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Não encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          example: unauthorized
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: true
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    LoginResponse:
+      type: object
+      required: [access_token, refresh_token, expires_in, user]
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        expires_in:
+          type: integer
+          description: Segundos até expirar o access_token
+        user:
+          $ref: '#/components/schemas/User'
+
+    UserRole:
+      type: string
+      enum: [admin, manager, supervisor, agent]
+
+    PipelineStage:
+      type: string
+      enum:
+        - em_atendimento
+        - em_negociacao
+        - aguardando_fechamento
+        - fechado
+        - nao_fechado
+
+    User:
+      type: object
+      required: [id, email, name, role, active]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        role:
+          $ref: '#/components/schemas/UserRole'
+        active:
+          type: boolean
+        unit_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    MeResponse:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            units:
+              type: array
+              items:
+                $ref: '#/components/schemas/Unit'
+
+    CreateUserRequest:
+      type: object
+      required: [email, password, name, role]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        name:
+          type: string
+        role:
+          $ref: '#/components/schemas/UserRole'
+        unit_ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        role:
+          $ref: '#/components/schemas/UserRole'
+        active:
+          type: boolean
+        password:
+          type: string
+          minLength: 8
+
+    Unit:
+      type: object
+      required: [id, name, code, timezone, active]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        code:
+          type: string
+        timezone:
+          type: string
+          example: America/Sao_Paulo
+        active:
+          type: boolean
+
+    CreateUnitRequest:
+      type: object
+      required: [name, code]
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        timezone:
+          type: string
+          default: America/Sao_Paulo
+
+    UpdateUnitRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        timezone:
+          type: string
+        active:
+          type: boolean
+
+    InboxItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        contact_name:
+          type: string
+        contact_phone:
+          type: string
+        unit_id:
+          type: string
+          format: uuid
+        pipeline_stage:
+          $ref: '#/components/schemas/PipelineStage'
+        mode:
+          type: string
+          enum: [ai_triage, human]
+        owner_id:
+          type: string
+          format: uuid
+          nullable: true
+        intent:
+          type: string
+          nullable: true
+        ai_summary:
+          type: string
+          nullable: true
+        last_message_preview:
+          type: string
+        last_message_at:
+          type: string
+          format: date-time
