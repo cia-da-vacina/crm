@@ -2,21 +2,24 @@
 
 POC do CRM WhatsApp (triagem IA + handoff humano) — Next.js frontend + API Go em memória.
 
-## Demo local
+## Demo online
 
-```bash
-npm install --ignore-scripts
-npm run build -w @cia-da-vacina/styled-system
-npm run build -w @cia-da-vacina/design-system-tokens
-npm run build -w @cia-da-vacina/icon-system
-npm run build -w @cia-da-vacina/design-system
-npm run dev -w frontend
-```
+**https://cia-vacina-crm.vercel.app**
 
 Login: `admin@ciadavacina.com.br` / `admin123`
 
-Com `NEXT_PUBLIC_USE_MOCKS=true` o front usa MSW (não precisa da API Go).
+(Mocks MSW ligados — sem API Go necessária.)
 
-## Deploy
+## Repositório
 
-Frontend na Vercel (root directory `frontend`, mocks ligados).
+https://github.com/cia-da-vacina/crm
+
+## Demo local
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Com `NEXT_PUBLIC_USE_MOCKS=true` o front usa MSW.
