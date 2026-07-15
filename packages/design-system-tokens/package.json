@@ -18,7 +18,7 @@
     "dist"
   ],
   "scripts": {
-    "import:sencon": "node scripts/import-sencon-tokens.mjs",
+    "import:untitled-ui": "node scripts/import-untitled-ui-tokens.mjs",
     "build": "tsup src/index.ts --format esm,cjs --dts --clean",
     "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
     "prepublishOnly": "npm run build",

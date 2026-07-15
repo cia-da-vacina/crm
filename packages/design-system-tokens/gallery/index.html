@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cia da Vacina · Design Tokens</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Fraunces:opsz,wght@9..144,600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #143528;
+        --muted: #4a6b58;
+        --brand: #0f6b4c;
+        --line: #c5d9cc;
+        --surface: #f7fbf8;
+        --bg: #e7f0eb;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "DM Sans", system-ui, sans-serif;
+        color: var(--ink);
+        background: radial-gradient(
+            900px 420px at 10% -10%,
+            #cfe3d8,
+            transparent 60%
+          ),
+          var(--bg);
+        min-height: 100vh;
+      }
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px 80px;
+      }
+      h1 {
+        font-family: "Fraunces", Georgia, serif;
+        color: var(--brand);
+        margin: 0 0 8px;
+      }
+      h2 {
+        margin: 36px 0 12px;
+        font-size: 1.15rem;
+      }
+      .lead {
+        color: var(--muted);
+        max-width: 62ch;
+        line-height: 1.5;
+      }
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 20px 0 28px;
+        align-items: center;
+      }
+      .chip,
+      button.chip {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font: inherit;
+        font-size: 13px;
+        color: var(--muted);
+        cursor: pointer;
+      }
+      button.chip.active {
+        background: var(--brand);
+        color: #fff;
+        border-color: var(--brand);
+      }
+      input[type="search"] {
+        flex: 1;
+        min-width: 200px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font: inherit;
+      }
+      .palette {
+        margin-bottom: 22px;
+      }
+      .palette h3 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        text-transform: capitalize;
+      }
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+        gap: 6px;
+      }
+      .swatch {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .swatch .chip-color {
+        height: 40px;
+      }
+      .swatch .meta {
+        padding: 4px 6px;
+        font-size: 10px;
+        color: var(--muted);
+      }
+      .semantic {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 8px;
+      }
+      .sem {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 10px;
+        padding: 8px 10px;
+      }
+      .sem .dot {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        flex-shrink: 0;
+      }
+      .sem code {
+        font-size: 11px;
+        word-break: break-all;
+      }
+      .token-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 8px;
+      }
+      .token-card {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 12px;
+      }
+      .token-card strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+      footer {
+        margin-top: 40px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      a {
+        color: var(--brand);
+      }
+      code {
+        background: #dff0e7;
+        padding: 1px 5px;
+        border-radius: 4px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Design Tokens</h1>
+      <p class="lead">
+        Pacote <code>@cia-da-vacina/design-system-tokens</code>: escalas
+        <a href="https://www.untitledui.com/figma">Untitled UI</a>
+        + brand Cia (evergreen/mist) + temas semânticos
+        <strong>light/dark</strong> + tokens de CRM (pipeline/mode).
+      </p>
+      <div class="toolbar">
+        <span class="chip" id="stats">…</span>
+        <button type="button" class="chip active" data-mode="light">Light</button>
+        <button type="button" class="chip" data-mode="dark">Dark</button>
+        <input id="q" type="search" placeholder="Filtrar paleta ou token…" />
+      </div>
+
+      <h2>Raw palettes</h2>
+      <div id="palettes"></div>
+
+      <h2>Semantic theme (<span id="modeLabel">light</span>)</h2>
+      <div class="semantic" id="semantic"></div>
+
+      <h2>Space</h2>
+      <div class="token-grid" id="space"></div>
+
+      <h2>Radii</h2>
+      <div class="token-grid" id="radii"></div>
+
+      <footer>
+        Based on
+        <a href="https://www.untitledui.com/figma">Untitled UI</a>
+        ·
+        <a href="https://github.com/cia-da-vacina/design-system-tokens"
+          >repo</a
+        >
+        ·
+        <a href="https://cia-vacina-icons.vercel.app">ícones</a>
+        ·
+        <a href="https://cia-vacina-ds.vercel.app">design system</a>
+      </footer>
+    </main>
+    <script src="./tokens-data.js"></script>
+    <script>
+      const data = window.CIA_TOKENS;
+      let mode = "light";
+      const q = document.getElementById("q");
+      const palettesEl = document.getElementById("palettes");
+      const semanticEl = document.getElementById("semantic");
+      const spaceEl = document.getElementById("space");
+      const radiiEl = document.getElementById("radii");
+
+      document.getElementById("stats").textContent = `${
+        Object.keys(data.palettes).length
+      } paletas · ${Object.keys(data.themes.light).length} tokens semânticos`;
+
+      document.querySelectorAll("[data-mode]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          mode = btn.dataset.mode;
+          document
+            .querySelectorAll("[data-mode]")
+            .forEach((b) => b.classList.toggle("active", b === btn));
+          document.getElementById("modeLabel").textContent = mode;
+          renderSemantic();
+        });
+      });
+
+      function matchFilter(text) {
+        const f = q.value.trim().toLowerCase();
+        return !f || text.toLowerCase().includes(f);
+      }
+
+      function renderPalettes() {
+        palettesEl.innerHTML = "";
+        for (const [name, scale] of Object.entries(data.palettes)) {
+          if (!matchFilter(name)) continue;
+          const block = document.createElement("div");
+          block.className = "palette";
+          block.innerHTML = `<h3>${name}</h3>`;
+          const row = document.createElement("div");
+          row.className = "swatches";
+          for (const [step, value] of Object.entries(scale)) {
+            const s = document.createElement("div");
+            s.className = "swatch";
+            s.innerHTML = `<div class="chip-color" style="background:${value}"></div><div class="meta">${step}<br>${value}</div>`;
+            row.appendChild(s);
+          }
+          block.appendChild(row);
+          palettesEl.appendChild(block);
+        }
+      }
+
+      function renderSemantic() {
+        semanticEl.innerHTML = "";
+        const theme = data.themes[mode] || {};
+        const entries = Object.entries(theme).filter(([k, v]) => {
+          if (k === "inherit" || k === "transparent") return false;
+          if (typeof v !== "string" || !v.startsWith("#") && !v.startsWith("rgb"))
+            return matchFilter(k);
+          return matchFilter(k + v);
+        });
+        for (const [key, value] of entries) {
+          const el = document.createElement("div");
+          el.className = "sem";
+          const isColor =
+            typeof value === "string" &&
+            (value.startsWith("#") || value.startsWith("rgb"));
+          el.innerHTML = isColor
+            ? `<div class="dot" style="background:${value}"></div><div><code>${key}</code><div style="font-size:11px;color:#4a6b58">${value}</div></div>`
+            : `<div><code>${key}</code> = ${value}</div>`;
+          semanticEl.appendChild(el);
+        }
+      }
+
+      function renderMap(target, obj) {
+        target.innerHTML = "";
+        for (const [k, v] of Object.entries(obj)) {
+          if (!matchFilter(String(k))) continue;
+          const el = document.createElement("div");
+          el.className = "token-card";
+          el.innerHTML = `<strong>${k}</strong>${v}`;
+          target.appendChild(el);
+        }
+      }
+
+      function renderAll() {
+        renderPalettes();
+        renderSemantic();
+        renderMap(spaceEl, data.space);
+        renderMap(radiiEl, data.radii);
+      }
+
+      q.addEventListener("input", renderAll);
+      renderAll();
+    </script>
+  </body>
+</html>

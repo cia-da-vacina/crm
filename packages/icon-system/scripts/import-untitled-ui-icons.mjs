@@ -1,8 +1,8 @@
 /**
- * Converts Sencon Icon System (.tsx per icon) into @cia-da-vacina/icon-system
+ * Converts Untitled UI (.tsx per icon) into @cia-da-vacina/icon-system
  * createIcon modules + gallery data + barrel exports.
  *
- * Usage: node scripts/import-sencon-icons.mjs
+ * Usage: node scripts/import-untitled-ui-icons.mjs
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -10,9 +10,13 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
-const SENCON =
-  process.env.SENCON_ICON_DIR ||
-  "E:\\Projetos\\SenconIconSystem\\src\\components\\Icon";
+const SOURCE = process.env.UNTITLED_UI_ICON_DIR;
+if (!SOURCE) {
+  console.error(
+    "Set UNTITLED_UI_ICON_DIR to your local Untitled UI icons export folder.\nSee https://www.untitledui.com/figma",
+  );
+  process.exit(1);
+}
 const OUT_DIR = path.join(ROOT, "src", "icons", "generated");
 const GALLERY_DATA = path.join(ROOT, "gallery", "icons-data.js");
 const BARREL = path.join(ROOT, "src", "icons", "generated", "index.ts");
@@ -115,7 +119,7 @@ fs.rmSync(OUT_DIR, { recursive: true, force: true });
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
 const files = fs
-  .readdirSync(SENCON)
+  .readdirSync(SOURCE)
   .filter((f) => f.endsWith(".tsx") && f !== "index.ts" && f !== "index.tsx");
 
 const gallery = [];
@@ -130,7 +134,7 @@ for (const file of files) {
     fail++;
     continue;
   }
-  const full = path.join(SENCON, file);
+  const full = path.join(SOURCE, file);
   // skip Native subtree if somehow present as file
   if (fs.statSync(full).isDirectory()) continue;
 

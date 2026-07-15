@@ -1,7 +1,7 @@
 import raw from "../../../tokens/global/colors";
 
 /**
- * Cia CRM overlay — applied ON TOP of Sencon semantic colors.
+ * Cia CRM overlay — applied ON TOP of Untitled UI semantic colors.
  * Keeps product identity (evergreen) + pipeline/mode tokens the CRM already uses.
  */
 const crmOverlay = {

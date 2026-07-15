@@ -10,7 +10,7 @@ export type CiaThemeMode = "light" | "dark";
 
 export type CiaThemeProviderProps = {
   children: ReactNode;
-  /** Defaults to light (Cia evergreen CRM look on top of Sencon tokens). */
+  /** Defaults to light (Cia evergreen CRM look on top of Untitled UI tokens). */
   mode?: CiaThemeMode;
 };
 

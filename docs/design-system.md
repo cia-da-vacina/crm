@@ -1,6 +1,10 @@
 # Design System — Cia da Vacina
 
-Espelho estrutural do setup Sencon (4 repositórios), sob medida para o CRM.
+Design system modular em 4 pacotes (4 repositórios), sob medida para o CRM.
+
+Base visual de tokens/ícones alinhada ao
+[Untitled UI](https://www.untitledui.com/figma), com identidade própria Cia da Vacina
+(evergreen, tipografia Fraunces + DM Sans, tokens de pipeline CRM).
 
 | Pacote | Repo | Local |
 |--------|------|-------|

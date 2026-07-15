@@ -22,7 +22,7 @@ export type IconSizeToken = keyof typeof iconSizes;
 export type IconProps = SpaceProps &
   ColorProps & {
     size?: IconSizeToken;
-    /** Theme color token or CSS color; applied as stroke (Untitled UI / Sencon style). */
+    /** Theme color token or CSS color; applied as stroke (Untitled UI style). */
     fill?: string;
     className?: string;
     title?: string;
@@ -41,7 +41,7 @@ const Svg = styled.svg.withConfig({
   ${space}
   ${color}
 
-  /* Sencon parity: force stroke icons, never filled blobs */
+  /* Untitled UI stroke style: force stroke icons, never filled blobs */
   & * {
     fill: none !important;
     stroke: inherit;

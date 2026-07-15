@@ -1,4 +1,4 @@
-/** Space scale — Sencon numeric (as px) with Cia-friendly named aliases. */
+/** Space scale — Untitled UI numeric (as px) with Cia-friendly named aliases. */
 const space = {
   0: "0px",
   0.5: "2px",
@@ -34,7 +34,7 @@ const space = {
   480: "1920px",
   none: "0px",
   xxs: "2px",
-  // Cia CRM aliases (override Sencon named scale for existing components)
+  // Cia CRM aliases (override Untitled UI named scale for existing components)
   xs: "4px",
   sm: "8px",
   md: "16px",

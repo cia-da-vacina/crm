@@ -1,4 +1,4 @@
-/** Radii — Sencon scale with Cia mid sizes for CRM components. */
+/** Radii — Untitled UI scale with Cia mid sizes for CRM components. */
 const radii = {
   none: "0px",
   xxs: "2px",

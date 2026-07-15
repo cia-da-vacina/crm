@@ -1,6 +1,6 @@
 import { createIcon } from "./createIcon";
 
-/** Brand / CRM-specific icons not present in Sencon Untitled UI set */
+/** Brand / CRM-specific icons not present in the Untitled UI set */
 
 export const SyringeIcon = createIcon(
   "SyringeIcon",

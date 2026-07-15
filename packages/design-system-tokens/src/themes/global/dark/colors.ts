@@ -1,4 +1,4 @@
-import sencon from "./colors/index";
+import untitledSemantic from "./colors/index";
 import crmOverlay from "./crmOverlay";
 import raw from "../../../tokens/global/colors";
 
@@ -17,11 +17,11 @@ function flattenRaw(palette: typeof raw): Record<string, string> {
 }
 
 /**
- * Final semantic map: Sencon Untitled UI + Cia CRM overlay + raw flatten.
+ * Final semantic map: Untitled UI + Cia CRM overlay + raw flatten.
  * Overlay wins on conflicting keys (e.g. bg.brand.solid → evergreen).
  */
 const colors = {
-  ...sencon,
+  ...untitledSemantic,
   ...crmOverlay,
   ...flattenRaw(raw),
 } as const;
