@@ -1,0 +1,25 @@
+import colors from "../../../../tokens/global/colors";
+
+export default {
+  'text.primary': colors.grayLight[900],
+  'text.primary.onbrand': colors.base.white,
+  'text.secondary': colors.grayLight[700],
+  'text.secondary.hover': colors.grayLight[800],
+  'text.secondary.onbrand': colors.brand[200],
+  'text.tertiary': colors.grayLight[600],
+  'text.tertiary.hover': colors.grayLight[700],
+  'text.tertiary.onbrand': colors.brand[200],
+  'text.quarternary': colors.grayLight[500],
+  'text.quarternary.onbrand': colors.brand[400],
+  'text.white': colors.base.white,
+  'text.disabled': colors.grayLight[500],
+  'text.placeholder': colors.grayLight[500],
+  'text.placeholder.subtle': colors.grayLight[300],
+  'text.brand.primary': colors.brand[900],
+  'text.brand.secondary': colors.brand[700],
+  'text.brand.tertiary': colors.brand[600],
+  'text.brand.tertiary.alt': colors.brand[600],
+  'text.error.primary': colors.error[600],
+  'text.warning.primary': colors.warning[600],
+  'text.success.primary': colors.success[600],
+};

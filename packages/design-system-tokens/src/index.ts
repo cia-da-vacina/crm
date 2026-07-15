@@ -1,5 +1,7 @@
 export { default as webLight } from "./themes/web/light";
 export type { WebLightTheme } from "./themes/web/light";
+export { default as webDark } from "./themes/web/dark";
+export type { WebDarkTheme } from "./themes/web/dark";
 
 export { default as colors } from "./tokens/global/colors";
 export { default as borderWidths } from "./tokens/global/borderWidths";

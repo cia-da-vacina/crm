@@ -1,0 +1,26 @@
+import colors from "../../../../tokens/global/colors";
+
+export default {
+  'fg.primary': colors.base.white,
+  'fg.secondary': colors.grayDark[300],
+  'fg.secondary.hover': colors.grayDark[200],
+  'fg.tertiary': colors.grayDark[400],
+  'fg.tertiary.hover': colors.grayDark[300],
+  'fg.quaternary': colors.grayDark[400],
+  'fg.quaternary.hover': colors.grayDark[300],
+  'fg.quinary': colors.grayDark[500],
+  'fg.quinary.hover': colors.grayDark[400],
+  'fg.senary': colors.grayDark[600],
+  'fg.white': colors.base.white,
+  'fg.disabled': colors.grayDark[500],
+  'fg.disabled.subtle': colors.grayDark[600],
+  'fg.brand.primary': colors.brand[500],
+  'fg.brand.primary.alt': colors.grayDark[300],
+  'fg.brand.secondary': colors.brand[500],
+  'fg.error.primary': colors.error[500],
+  'fg.error.secondary': colors.error[400],
+  'fg.warning.primary': colors.warning[500],
+  'fg.warning.secondary': colors.warning[400],
+  'fg.success.primary': colors.success[500],
+  'fg.success.secondary': colors.success[400],
+};

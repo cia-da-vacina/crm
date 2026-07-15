@@ -36,7 +36,13 @@ export { default as ConversationList } from "./components/CRM/ConversationList";
 
 export {
   webLight,
+  webDark,
   stageLabels,
   pipelineStages,
 } from "@cia-da-vacina/design-system-tokens";
-export type { PipelineStage } from "@cia-da-vacina/design-system-tokens";
+export type {
+  PipelineStage,
+  WebLightTheme,
+  WebDarkTheme,
+} from "@cia-da-vacina/design-system-tokens";
+export type { CiaThemeMode } from "./provider/CiaThemeProvider";

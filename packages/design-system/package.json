@@ -20,7 +20,8 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --clean --external react --external react-dom --external styled-components --external @cia-da-vacina/styled-system --external @cia-da-vacina/design-system-tokens --external @cia-da-vacina/icon-system",
     "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "prepare": "npm run build"
   },
   "peerDependencies": {
     "@cia-da-vacina/design-system-tokens": ">=0.1.0",
@@ -31,9 +32,9 @@
     "styled-components": ">=6"
   },
   "devDependencies": {
-    "@cia-da-vacina/design-system-tokens": "*",
-    "@cia-da-vacina/icon-system": "*",
-    "@cia-da-vacina/styled-system": "*",
+    "@cia-da-vacina/design-system-tokens": "github:cia-da-vacina/design-system-tokens#main",
+    "@cia-da-vacina/icon-system": "github:cia-da-vacina/icon-system#main",
+    "@cia-da-vacina/styled-system": "github:cia-da-vacina/styled-system#main",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "react": "^19.1.0",
