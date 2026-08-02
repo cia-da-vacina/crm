@@ -6,7 +6,7 @@ Next.js 15 (App Router) + React 19 + TypeScript. O BFF fala com o backend via `A
 
 ## Como rodar
 
-1. Suba o backend (API em `:8080`).
+1. Quando a API Go existir, suba em `:8080` (ver [`backend/README.md`](../backend/README.md)).
 2. Configure o frontend:
 
 ```bash
@@ -22,7 +22,9 @@ COOKIE_SECURE=false
 
 Abra [http://localhost:3000](http://localhost:3000).
 
-Se o seed do backend ainda cria os usuários de demonstração, use:
+Sem API no ar, a UI sobe mas login/dados falham — esperado até o backend estar pronto.
+
+Quando o seed do backend existir, as credenciais demo costumam ser:
 
 | Usuário | Senha |
 |---|---|
