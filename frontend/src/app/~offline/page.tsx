@@ -19,8 +19,8 @@ export default function OfflinePage() {
           Sem conexão
         </Heading>
         <Text muted>
-          O CRM precisa de internet para inbox e WhatsApp. Assim que voltar, toque
-          em tentar novamente.
+          O CRM precisa de internet para inbox, WhatsApp, Instagram e Facebook.
+          Assim que voltar, toque em tentar novamente.
         </Text>
         <Button type="button" onClick={() => window.location.reload()}>
           Tentar novamente

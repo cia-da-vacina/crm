@@ -1,0 +1,1149 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cia da Vacina · Apresentação do produto</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #10241c;
+        --muted: #5a7266;
+        --brand: #0f6b4c;
+        --bg: #eef5f0;
+        --white: #fff;
+        --line: rgba(16, 36, 28, 0.1);
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0; height: 100%; overflow: hidden;
+        font-family: "DM Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #081510; color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+      .progress { position: fixed; inset: 0 auto auto 0; height: 3px; width: 100%; z-index: 30; }
+      .progress i { display: block; height: 100%; width: 0; background: #0f6b4c; transition: width .35s ease; }
+      .slide {
+        position: absolute; inset: 0; display: none; opacity: 0;
+        transition: opacity .4s ease;
+        padding: clamp(28px, 5vw, 64px);
+        background:
+          radial-gradient(1000px 520px at 0% 0%, #d7ebe1, transparent 55%),
+          radial-gradient(800px 420px at 100% 0%, #e8f3ec, transparent 50%),
+          var(--bg);
+      }
+      .slide.active { display: flex; opacity: 1; }
+      .slide.dark {
+        background:
+          radial-gradient(900px 500px at 15% -10%, #184535, transparent 55%),
+          #0b1612;
+        color: #f3faf6;
+      }
+      .slide.dark .eyebrow, .slide.dark .sub, .slide.dark .muted { color: #9fb8aa; }
+      .slide.center {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding-bottom: clamp(56px, 8vh, 88px); /* room for bottom chrome */
+      }
+      .slide.center > .stack-center {
+        width: min(980px, 100%);
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .slide.center h2 {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+      }
+      .slide.center .dev-card h2 {
+        margin-left: 0;
+        margin-right: 0;
+        text-align: left;
+      }
+      .slide.center .sub {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .slide.hero-shot {
+        padding: 0;
+        align-items: stretch;
+      }
+      .hero-shot .copy {
+        width: min(420px, 38%);
+        padding: clamp(32px, 5vw, 72px);
+        display: flex; flex-direction: column; justify-content: center;
+      }
+      .hero-shot .visual {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        display: flex; align-items: center; justify-content: center;
+        padding: clamp(24px, 4vw, 48px);
+        background:
+          linear-gradient(160deg, #dfece5, #f7fbf8 55%, #e7f2eb);
+      }
+      .eyebrow {
+        margin: 0 0 14px; font-size: 12px; font-weight: 700;
+        letter-spacing: .16em; text-transform: uppercase; color: var(--brand);
+      }
+      h1, h2 {
+        font-family: "Fraunces", Georgia, serif;
+        font-weight: 600; letter-spacing: -.03em; line-height: 1.05; margin: 0;
+      }
+      h1 { font-size: clamp(40px, 6.5vw, 78px); }
+      h2 { font-size: clamp(28px, 4.4vw, 52px); max-width: 14ch; }
+      .sub {
+        margin: 16px 0 0; font-size: clamp(16px, 1.8vw, 22px);
+        line-height: 1.45; color: var(--muted); max-width: 32ch; font-weight: 450;
+      }
+      .sub.wide { max-width: 40ch; }
+      .device {
+        width: min(920px, 100%);
+        border-radius: 18px;
+        background: #1c2420;
+        padding: 10px 10px 12px;
+        box-shadow:
+          0 40px 90px rgba(8, 30, 22, .28),
+          0 2px 0 rgba(255,255,255,.08) inset;
+      }
+      .device.lite {
+        background: #d8e4dc;
+        box-shadow: 0 30px 70px rgba(8, 30, 22, .16);
+      }
+      .dots { display: flex; gap: 6px; padding: 2px 4px 10px; }
+      .dots span {
+        width: 8px; height: 8px; border-radius: 50%;
+        background: rgba(255,255,255,.18);
+      }
+      .device.lite .dots span { background: rgba(16,36,28,.18); }
+      .device img {
+        display: block; width: 100%;
+        border-radius: 10px;
+        background: #fff;
+      }
+      .shot-plain {
+        width: min(920px, 100%);
+        margin: 0 auto;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 28px 70px rgba(8,30,22,.18);
+        border: 1px solid var(--line);
+      }
+      .shot-plain img {
+        display: block;
+        width: 100%;
+        margin: 0 auto;
+      }
+      .grid-2 {
+        width: min(1120px, 100%); margin: 0 auto;
+        display: grid; grid-template-columns: .95fr 1.05fr;
+        gap: clamp(24px, 4vw, 56px); align-items: center;
+      }
+      .points { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 12px; }
+      .points li {
+        font-size: clamp(17px, 1.8vw, 22px); font-weight: 550; letter-spacing: -.02em;
+        display: flex; gap: 12px; align-items: flex-start;
+      }
+      .points li::before {
+        content: ""; width: 7px; height: 7px; border-radius: 50%;
+        background: var(--brand); margin-top: .55em; flex-shrink: 0;
+      }
+      .pair {
+        width: min(1100px, 100%); margin: 0 auto;
+        display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+      }
+      .pair .device { width: 100%; }
+      .caption {
+        margin-top: 10px; font-size: 13px; color: var(--muted); text-align: center;
+      }
+      .links {
+        width: min(760px, 100%); margin: 28px auto 0; display: grid; gap: 10px;
+      }
+      .link {
+        display: flex; justify-content: space-between; gap: 12px; align-items: center;
+        padding: 16px 18px; border-radius: 14px; text-decoration: none; color: inherit;
+        background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1);
+      }
+      .link strong { font-size: 16px; }
+      .link span { color: #9fb8aa; font-size: 13px; text-align: right; }
+      .pill {
+        display: inline-flex; margin-top: 24px; padding: 8px 14px; border-radius: 999px;
+        background: rgba(15,107,76,.12); color: var(--brand);
+        font-size: 13px; font-weight: 650; text-decoration: none;
+      }
+      .creds {
+        margin: 28px auto 0; display: inline-grid; gap: 6px; text-align: left;
+        padding: 16px 18px; border-radius: 14px;
+        background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+        font-size: 15px;
+      }
+      .creds code { font-family: ui-monospace, Menlo, monospace; color: #d8efe4; }
+      .chrome {
+        position: fixed; left: 22px; right: 22px; bottom: 18px; z-index: 30;
+        display: flex; justify-content: space-between; align-items: center;
+        color: #7f978b; font-size: 12px; letter-spacing: .04em;
+      }
+      .nav { display: flex; gap: 8px; }
+      .nav button {
+        width: 38px; height: 38px; border-radius: 999px; cursor: pointer;
+        border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.75);
+        color: #10241c; font-size: 16px;
+      }
+      .mark {
+        width: 64px; height: 64px; border-radius: 18px; margin: 0 auto 22px;
+        background: var(--brand); display: grid; place-items: center;
+        box-shadow: 0 16px 36px rgba(15,107,76,.3);
+      }
+      .mark svg { width: 30px; height: 30px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .stack-board {
+        width: min(980px, 100%);
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        text-align: left;
+      }
+      .stack-card {
+        background: rgba(255,255,255,.72);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px 18px 16px;
+        box-shadow: 0 18px 40px rgba(8,30,22,.08);
+      }
+      .slide.dark .stack-card {
+        background: rgba(255,255,255,.05);
+        border-color: rgba(255,255,255,.1);
+        box-shadow: none;
+      }
+      .stack-card h3 {
+        margin: 0 0 12px;
+        font-size: 14px;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: var(--brand);
+        font-weight: 700;
+      }
+      .slide.dark .stack-card h3 { color: #7dcfb0; }
+      .chips {
+        display: flex; flex-wrap: wrap; gap: 8px;
+      }
+      .chips span {
+        display: inline-flex;
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: rgba(15,107,76,.08);
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 600;
+      }
+      .slide.dark .chips span {
+        background: rgba(255,255,255,.08);
+        color: #e7f4ee;
+      }
+      .dev-card {
+        width: min(860px, 100%);
+        margin: 24px auto 0;
+        display: grid;
+        grid-template-columns: 200px minmax(0, 1fr);
+        gap: clamp(24px, 4vw, 40px);
+        align-items: center;
+        justify-content: center;
+        text-align: left;
+        padding: clamp(22px, 3vw, 32px);
+        border-radius: 28px;
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.1);
+      }
+      .dev-photo {
+        width: 200px;
+        height: 240px;
+        border-radius: 22px;
+        object-fit: cover;
+        object-position: center 20%;
+        display: block;
+        box-shadow: 0 18px 40px rgba(0,0,0,.35);
+      }
+      .dev-photo.felipe {
+        object-position: center 18%;
+      }
+      .dev-card h2 {
+        max-width: none;
+        font-size: clamp(30px, 3.8vw, 44px);
+        margin: 0;
+        text-align: left;
+      }
+      .dev-role {
+        margin: 8px 0 0;
+        color: #7dcfb0;
+        font-weight: 650;
+        font-size: 15px;
+        letter-spacing: -.01em;
+      }
+      .dev-bio {
+        margin: 16px 0 0;
+        color: #b7cdc2;
+        font-size: 17px;
+        line-height: 1.45;
+        max-width: 40ch;
+      }
+      .dev-proof {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0 0;
+        display: grid;
+        gap: 10px;
+      }
+      .dev-proof li {
+        font-size: 15px;
+        font-weight: 550;
+        letter-spacing: -.01em;
+        color: #edf7f1;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+      }
+      .dev-proof li::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #7dcfb0;
+        margin-top: .55em;
+        flex-shrink: 0;
+      }
+      .dev-meta {
+        margin-top: 22px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        font-size: 14px;
+        color: #d7ebe2;
+      }
+      .dev-meta a {
+        color: inherit;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(125,207,176,.4);
+      }
+      .dev-meta a:hover { border-bottom-color: #7dcfb0; }
+      .phase-grid {
+        width: min(980px, 100%);
+        margin: 24px auto 0;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        text-align: left;
+      }
+      .phase-card {
+        background: rgba(255,255,255,.72);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px 18px 16px;
+        box-shadow: 0 18px 40px rgba(8,30,22,.08);
+      }
+      .slide.dark .phase-card {
+        background: rgba(255,255,255,.05);
+        border-color: rgba(255,255,255,.1);
+        box-shadow: none;
+      }
+      .phase-week {
+        display: inline-flex;
+        margin: 0 0 10px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        background: rgba(15,107,76,.12);
+        color: var(--brand);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+      }
+      .slide.dark .phase-week {
+        background: rgba(125,207,176,.14);
+        color: #7dcfb0;
+      }
+      .phase-card h3 {
+        margin: 0;
+        font-family: "Fraunces", Georgia, serif;
+        font-size: clamp(20px, 2.2vw, 26px);
+        font-weight: 600;
+        letter-spacing: -.02em;
+        line-height: 1.15;
+      }
+      .phase-card p {
+        margin: 10px 0 0;
+        font-size: 14px;
+        line-height: 1.45;
+        color: var(--muted);
+      }
+      .slide.dark .phase-card p { color: #9fb8aa; }
+      .phase-card ul {
+        list-style: none;
+        padding: 0;
+        margin: 14px 0 0;
+        display: grid;
+        gap: 8px;
+      }
+      .phase-card li {
+        font-size: 14px;
+        font-weight: 550;
+        letter-spacing: -.01em;
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+      }
+      .phase-card li::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--brand);
+        margin-top: .55em;
+        flex-shrink: 0;
+      }
+      .slide.dark .phase-card li::before { background: #7dcfb0; }
+      .know-grid {
+        width: min(980px, 100%);
+        margin: 24px auto 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 18px;
+        text-align: left;
+      }
+      .know-item {
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: rgba(255,255,255,.72);
+        border: 1px solid var(--line);
+      }
+      .slide.dark .know-item {
+        background: rgba(255,255,255,.05);
+        border-color: rgba(255,255,255,.1);
+      }
+      .know-item strong {
+        display: block;
+        font-size: 13px;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: var(--brand);
+        margin-bottom: 6px;
+      }
+      .slide.dark .know-item strong { color: #7dcfb0; }
+      .know-item span {
+        font-size: 15px;
+        font-weight: 550;
+        letter-spacing: -.01em;
+        line-height: 1.35;
+      }
+      .deal-list {
+        width: min(760px, 100%);
+        margin: 28px auto 0;
+        display: grid;
+        gap: 10px;
+        text-align: left;
+      }
+      .deal-item {
+        display: grid;
+        grid-template-columns: 110px 1fr;
+        gap: 14px;
+        align-items: start;
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.1);
+      }
+      .deal-item b {
+        font-size: 12px;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: #7dcfb0;
+        padding-top: 2px;
+      }
+      .deal-item span {
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 1.4;
+        color: #e7f4ee;
+      }
+      .rate-pill {
+        display: inline-flex;
+        margin-top: 18px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        background: rgba(125,207,176,.14);
+        color: #d8efe4;
+        font-size: 14px;
+        font-weight: 650;
+      }
+      @media (max-width: 900px) {
+        .hero-shot { flex-direction: column; }
+        .hero-shot .copy { width: 100%; }
+        .grid-2, .pair, .stack-board, .dev-card, .phase-grid, .know-grid { grid-template-columns: 1fr; }
+        .dev-photo { margin: 0 auto; width: 160px; height: 190px; }
+        .dev-card { text-align: center; }
+        .dev-card h2 { text-align: center; }
+        .dev-bio, .dev-proof { margin-left: auto; margin-right: auto; text-align: left; }
+        .dev-meta { justify-content: center; }
+        .deal-item { grid-template-columns: 1fr; gap: 6px; }
+        h2 { max-width: none; }
+        .link { flex-direction: column; align-items: flex-start; }
+        .link span { text-align: left; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="progress"><i id="bar"></i></div>
+
+    <div id="deck">
+      <!-- 1 -->
+      <section class="slide center dark active">
+        <div>
+          <div class="mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-1 1-2.5 1.2-3.5.2l-.1-.1c-1-.9-.9-2.4.1-3.5L15 5"/><path d="m9 11 4 4"/><path d="m5 19-3 3"/><path d="m14 4 6 6"/></svg>
+          </div>
+          <p class="eyebrow">Cia da Vacina</p>
+          <h1>O atendimento<br />no ritmo das unidades.</h1>
+          <p class="sub" style="margin-left:auto;margin-right:auto">
+            CRM de WhatsApp com triagem por IA e atendimento humano —
+            feito para as unidades da Cia da Vacina.
+          </p>
+        </div>
+      </section>
+
+      <!-- 2 -->
+      <section class="slide hero-shot">
+        <div class="copy">
+          <p class="eyebrow">Login</p>
+          <h2>Entrar e começar.</h2>
+          <p class="sub">
+            Acesso simples, visual limpo e a marca no centro.
+          </p>
+        </div>
+        <div class="visual">
+          <div class="device lite">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <img src="assets/login.png" alt="Tela de login do CRM Cia da Vacina" />
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section class="slide hero-shot dark" style="background:#0b1612">
+        <div class="copy">
+          <p class="eyebrow">Inbox</p>
+          <h2>Toda conversa. Um lugar.</h2>
+          <p class="sub">
+            Quem está com a IA, quem já passou para o time,
+            o resumo do pedido e a etapa do funil — na mesma lista.
+          </p>
+        </div>
+        <div class="visual" style="background:linear-gradient(160deg,#12261d,#1a3328)">
+          <div class="device">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <img src="assets/inbox.png" alt="Inbox com conversas WhatsApp e resumo IA" />
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section class="slide">
+        <div class="grid-2">
+          <div>
+            <p class="eyebrow">Operação</p>
+            <h2>Do primeiro “oi” ao fechamento.</h2>
+            <ul class="points">
+              <li>Triagem automática com resumo da IA</li>
+              <li>Passagem clara para o atendente</li>
+              <li>Funil por etapa em cada unidade</li>
+              <li>Follow-ups que não se perdem</li>
+            </ul>
+          </div>
+          <div class="device lite">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <img src="assets/dashboard.png" alt="Dashboard de conversão e funil" />
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section class="slide center">
+        <div class="stack-center">
+          <p class="eyebrow">Visão do gestor</p>
+          <h2 style="max-width:16ch">Cinco unidades. Um consolidado.</h2>
+          <p class="sub wide" style="margin-top:16px;margin-bottom:24px">
+            Conversas abertas, IA, humano, conversão e funil — sem planilha paralela.
+          </p>
+          <div class="shot-plain">
+            <img src="assets/dashboard.png" alt="Dashboard multiunidade" />
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 -->
+      <section class="slide hero-shot">
+        <div class="copy">
+          <p class="eyebrow">Scripts</p>
+          <h2>POPs que o time realmente usa.</h2>
+          <p class="sub">
+            Saudação, preços, agendamento e follow-up.
+            Scripts prontos — o atendimento não depende de memória.
+          </p>
+        </div>
+        <div class="visual">
+          <div class="device lite">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <img src="assets/pops.png" alt="Gestão de POPs e scripts" />
+          </div>
+        </div>
+      </section>
+
+      <!-- 7 -->
+      <section class="slide">
+        <div class="grid-2">
+          <div class="device lite">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <img src="assets/users.png" alt="Gestão de usuários e permissões" />
+          </div>
+          <div>
+            <p class="eyebrow">Controle</p>
+            <h2>Quem acessa o quê.</h2>
+            <ul class="points">
+              <li>Perfis por papel no time</li>
+              <li>Vínculo por unidade</li>
+              <li>Admin, operação e supervisão no mesmo produto</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8 -->
+      <section class="slide hero-shot dark" style="background:#0b1612">
+        <div class="copy">
+          <p class="eyebrow">WhatsApp</p>
+          <h2>Configuração na mão da operação.</h2>
+          <p class="sub">
+            Unidade, campanhas e comportamento da IA —
+            ajustáveis sem abrir chamado a cada mudança.
+          </p>
+        </div>
+        <div class="visual" style="background:linear-gradient(160deg,#12261d,#1a3328)">
+          <div class="device">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <img src="assets/settings.png" alt="Configurações de WhatsApp e IA" />
+          </div>
+        </div>
+      </section>
+
+      <!-- 9 -->
+      <section class="slide center">
+        <div style="width:min(1100px,100%)">
+          <p class="eyebrow">Identidade</p>
+          <h2 style="max-width:16ch;margin:0 auto">Visual próprio da marca.</h2>
+          <p class="sub wide" style="margin:16px auto 28px">
+            Design system com componentes, cores e ícones —
+            pra crescer sem virar um produto genérico.
+          </p>
+          <div class="pair">
+            <div>
+              <div class="device lite">
+                <div class="dots"><span></span><span></span><span></span></div>
+                <img src="assets/ds.png" alt="Preview do Design System" />
+              </div>
+              <p class="caption">Design System</p>
+            </div>
+            <div>
+              <div class="device lite">
+                <div class="dots"><span></span><span></span><span></span></div>
+                <img src="assets/tokens.png" alt="Galeria de tokens e cores" />
+              </div>
+              <p class="caption">Tokens e cores</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 -->
+      <section class="slide">
+        <div class="grid-2">
+          <div>
+            <p class="eyebrow">Por quê</p>
+            <h2>Feito pra operação da Cia da Vacina.</h2>
+            <ul class="points">
+              <li>Cinco unidades no mesmo sistema</li>
+              <li>IA tria, humano fecha a venda</li>
+              <li>Visual consistente e reutilizável</li>
+              <li>POC navegável para validar o fluxo</li>
+            </ul>
+          </div>
+          <div class="device lite">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <img src="assets/icons.png" alt="Biblioteca de ícones do produto" />
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 · Stack -->
+      <section class="slide center">
+        <div class="stack-center" style="width:min(980px,100%)">
+          <p class="eyebrow">Tecnologia</p>
+          <h2 style="max-width:12ch">Como é feito.</h2>
+          <p class="sub wide" style="margin:16px auto 28px">
+            Front, API e design system separados — cada um com responsabilidade clara.
+          </p>
+          <div class="stack-board">
+            <div class="stack-card">
+              <h3>Frontend</h3>
+              <div class="chips">
+                <span>Next.js 15</span>
+                <span>React 19</span>
+                <span>TypeScript</span>
+                <span>Styled Components</span>
+                <span>React Query</span>
+                <span>Zod + RHF</span>
+                <span>BFF + cookies</span>
+                <span>PWA</span>
+              </div>
+            </div>
+            <div class="stack-card">
+              <h3>Backend</h3>
+              <div class="chips">
+                <span>Go</span>
+                <span>RESTful</span>
+                <span>OAuth 2.0 · RS256</span>
+                <span>Postgres</span>
+              </div>
+            </div>
+            <div class="stack-card">
+              <h3>Design System</h3>
+              <div class="chips">
+                <span>Tokens</span>
+                <span>Core UI</span>
+                <span>Icon System</span>
+                <span>Styled System</span>
+                <span>Untitled UI</span>
+                <span>Vercel</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 · Time · Frontend -->
+      <section class="slide center dark">
+        <div class="stack-center" style="width:min(940px,100%)">
+          <p class="eyebrow">Time técnico · Frontend</p>
+          <div class="dev-card">
+            <img
+              class="dev-photo"
+              src="assets/cristian.png"
+              alt="Cristian Martini"
+            />
+            <div>
+              <h2>Cristian Martini</h2>
+              <p class="dev-role">
+                Senior Frontend Engineer · Freelancer
+              </p>
+              <div class="dev-meta">
+                <span>Marau · RS · remoto</span>
+                <a href="https://www.linkedin.com/in/cristian-martini-78bb92210/" target="_blank" rel="noreferrer">LinkedIn</a>
+                <a href="https://github.com/CristiancMartini" target="_blank" rel="noreferrer">GitHub</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13 · Time · Backend -->
+      <section class="slide center dark">
+        <div class="stack-center" style="width:min(940px,100%)">
+          <p class="eyebrow">Time técnico · Backend</p>
+          <div class="dev-card">
+            <img
+              class="dev-photo felipe"
+              src="assets/felipe.png"
+              alt="Felipe Meneguzzi"
+            />
+            <div>
+              <h2>Felipe Meneguzzi</h2>
+              <p class="dev-role">
+                Backend Engineer
+              </p>
+              <div class="dev-meta">
+                <span>Marau · RS · remoto</span>
+                <a href="https://www.linkedin.com/in/felipe-meneguzzi-programador/" target="_blank" rel="noreferrer">LinkedIn</a>
+                <a href="https://github.com/Felipe-Meneguzzi" target="_blank" rel="noreferrer">GitHub</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 -->
+      <section class="slide center dark">
+        <div>
+          <p class="eyebrow">Demo</p>
+          <h2 style="max-width:12ch;margin:0 auto">Abrir e usar agora.</h2>
+          <div class="links">
+            <a class="link" href="https://cia-vacina-crm.vercel.app" target="_blank" rel="noreferrer">
+              <strong>Abrir o CRM</strong>
+              <span>cia-vacina-crm.vercel.app</span>
+            </a>
+            <a class="link" href="https://cia-vacina-ds.vercel.app" target="_blank" rel="noreferrer">
+              <strong>Design System</strong>
+              <span>cia-vacina-ds.vercel.app</span>
+            </a>
+            <a class="link" href="https://cia-vacina-tokens.vercel.app" target="_blank" rel="noreferrer">
+              <strong>Tokens</strong>
+              <span>cia-vacina-tokens.vercel.app</span>
+            </a>
+            <a class="link" href="https://cia-vacina-icons.vercel.app" target="_blank" rel="noreferrer">
+              <strong>Ícones</strong>
+              <span>cia-vacina-icons.vercel.app</span>
+            </a>
+          </div>
+          <div class="creds">
+            <div>Login · <code>admin@ciadavacina.com.br</code></div>
+            <div>Senha · <code>admin123</code></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 -->
+      <section class="slide center">
+        <div>
+          <p class="eyebrow">Referência visual</p>
+          <h2 style="max-width:14ch;margin:0 auto">Untitled UI</h2>
+          <p class="sub wide" style="margin:16px auto 0">
+            Tokens e ícones a partir do kit Figma Untitled UI,
+            com a identidade da Cia da Vacina.
+          </p>
+          <a class="pill" href="https://www.untitledui.com/figma" target="_blank" rel="noreferrer">untitledui.com/figma</a>
+        </div>
+      </section>
+
+      <!-- Ponte → desenvolvimento -->
+      <section class="slide center dark">
+        <div class="stack-center" style="width:min(720px,100%)">
+          <p class="eyebrow">Da POC ao produto</p>
+          <h2 style="max-width:12ch;margin:0 auto">Isto é a prova. Agora o plano.</h2>
+          <p class="sub wide" style="margin:20px auto 0;text-align:center;max-width:34ch">
+            A POC serve para validar o fluxo. O próximo passo é o desenvolvimento
+            em dez semanas — com entrega, código e suporte.
+          </p>
+        </div>
+      </section>
+
+      <!-- Domínio & decisões -->
+      <section class="slide center dark">
+        <div class="stack-center" style="width:min(980px,100%)">
+          <p class="eyebrow">Fundação técnica</p>
+          <h2 style="max-width:14ch;margin:0 auto">Escopo e decisões já definidos.</h2>
+          <p class="sub wide" style="margin:16px auto 0;text-align:center">
+            Produto, dados e operação documentados —
+            a reunião foca em prioridade e prazo.
+          </p>
+          <div class="know-grid">
+            <div class="know-item">
+              <strong>Canal</strong>
+              <span>WhatsApp Meta Cloud API · 1 número por unidade · 5 unidades</span>
+            </div>
+            <div class="know-item">
+              <strong>IA</strong>
+              <span>Triagem + atendimento humano · provedor à escolha (OpenAI, Anthropic, Google…) · sem treinar com dados do cliente</span>
+            </div>
+            <div class="know-item">
+              <strong>Acesso</strong>
+              <span>OAuth&nbsp;2.0 · RS256 · perfis Admin, Gerente, Supervisor e Atendente</span>
+            </div>
+            <div class="know-item">
+              <strong>Dados</strong>
+              <span>Postgres · multiunidade · retenção LGPD de 24 meses</span>
+            </div>
+            <div class="know-item">
+              <strong>Operação</strong>
+              <span>Funil comercial · scripts · templates · follow-up · auditoria</span>
+            </div>
+            <div class="know-item">
+              <strong>Arquitetura</strong>
+              <span>Go + Next.js · ambientes de teste e produção · sem complexidade desnecessária</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Plano 10 semanas -->
+      <section class="slide center">
+        <div class="stack-center" style="width:min(980px,100%)">
+          <p class="eyebrow">Plano de desenvolvimento</p>
+          <h2 style="max-width:12ch;margin:0 auto">Dez semanas até o uso.</h2>
+          <p class="sub wide" style="margin:16px auto 0">
+            Demo semanal do que ficou pronto. Ajuste cedo, não no final.
+          </p>
+          <div class="phase-grid">
+            <div class="phase-card">
+              <p class="phase-week">Semanas 1–6</p>
+              <h3>Construir</h3>
+              <p>Arquitetura, WhatsApp e telas essenciais no ar.</p>
+              <ul>
+                <li>Login, permissões e multiunidade</li>
+                <li>Mensagens WhatsApp reais</li>
+                <li>IA triando e passando ao atendente</li>
+                <li>Funil, scripts e painel do gestor</li>
+              </ul>
+            </div>
+            <div class="phase-card">
+              <p class="phase-week">Semanas 7–8</p>
+              <h3>Testar</h3>
+              <p>Validar o fluxo, corrigir falhas e fechar a versão.</p>
+              <ul>
+                <li>Percorrer o fluxo completo com vocês</li>
+                <li>Segurança e casos críticos</li>
+                <li>Telas claras para o atendimento</li>
+                <li>Definir o que entra nesta versão</li>
+              </ul>
+            </div>
+            <div class="phase-card">
+              <p class="phase-week">Semanas 9–10</p>
+              <h3>Colocar em uso</h3>
+              <p>O time começa a operar; acompanhamos de perto.</p>
+              <ul>
+                <li>Treinar quem vai atender</li>
+                <li>Ajustar o que aparecer no dia a dia</li>
+                <li>Corrigir bugs rapidamente</li>
+                <li>Entregar código e documentação</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Detalhe semanas 1-6 -->
+      <section class="slide">
+        <div style="width:min(980px,100%);margin:0 auto">
+          <p class="eyebrow">Semanas 1–6</p>
+          <h2 style="max-width:14ch">Primeiro bloco: arquitetura e produto funcional.</h2>
+          <div class="phase-grid" style="margin-top:28px">
+            <div class="phase-card">
+              <p class="phase-week">Semanas 1–2</p>
+              <h3>Base + WhatsApp</h3>
+              <ul>
+                <li>Banco, login e permissões</li>
+                <li>Front conectado à API</li>
+                <li>Receber e enviar mensagens</li>
+                <li>Inbox por unidade</li>
+              </ul>
+            </div>
+            <div class="phase-card">
+              <p class="phase-week">Semanas 3–4</p>
+              <h3>IA e atendimento</h3>
+              <ul>
+                <li>Triagem automática</li>
+                <li>Atendente assume quando precisa</li>
+                <li>Etapas do funil</li>
+                <li>Scripts e templates</li>
+              </ul>
+            </div>
+            <div class="phase-card">
+              <p class="phase-week">Semanas 5–6</p>
+              <h3>Painel e fecho funcional</h3>
+              <ul>
+                <li>Painel por unidade e consolidado</li>
+                <li>Configurações WhatsApp e auditoria</li>
+                <li>Follow-up e ajustes de operação</li>
+                <li>Checklist do que precisa estar pronto</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Semanas 7-10 -->
+      <section class="slide center">
+        <div class="stack-center" style="width:min(980px,100%)">
+          <p class="eyebrow">Semanas 7–10</p>
+          <h2 style="max-width:14ch;margin:0 auto">Segundo bloco: qualidade e operação.</h2>
+          <div class="phase-grid">
+            <div class="phase-card">
+              <p class="phase-week">Semanas 7–8</p>
+              <h3>Testes</h3>
+              <ul>
+                <li>Fluxo completo: login → conversa → fechamento</li>
+                <li>Permissões e proteção de dados</li>
+                <li>Performance no uso diário</li>
+                <li>Telas claras para o atendimento</li>
+                <li>Homologação antes de abrir às unidades</li>
+              </ul>
+            </div>
+            <div class="phase-card">
+              <p class="phase-week">Semanas 9–10</p>
+              <h3>Entrada em uso</h3>
+              <ul>
+                <li>Treino para gestores e atendentes</li>
+                <li>Acompanhamento nos primeiros dias</li>
+                <li>Correção do que atrapalhar o atendimento</li>
+                <li>Ajuste de scripts com a operação</li>
+                <li>Entrega do código, docs e GitHub</li>
+              </ul>
+            </div>
+            <div class="phase-card">
+              <p class="phase-week">Rotina</p>
+              <h3>Como trabalhamos</h3>
+              <ul>
+                <li>Demo semanal do que foi entregue</li>
+                <li>Prioridades definidas com vocês</li>
+                <li>Escopo do contrato; fora disso, alinhamos</li>
+                <li>Canal direto para dúvidas</li>
+                <li>Clareza do que entra e do que fica depois</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- O que entra -->
+      <section class="slide">
+        <div class="grid-2">
+          <div>
+            <p class="eyebrow">Entrega</p>
+            <h2>O que entra no projeto.</h2>
+            <ul class="points">
+              <li>CRM WhatsApp multiunidade em produção</li>
+              <li>IA de triagem com atendimento humano</li>
+              <li>Painel, scripts, templates e auditoria</li>
+              <li>Código-fonte e organização no GitHub</li>
+              <li>Documentação técnica e de uso</li>
+              <li>Treinamento e acompanhamento na entrada</li>
+            </ul>
+          </div>
+          <div>
+            <p class="eyebrow">Fora desta versão</p>
+            <h2 style="color:var(--muted);font-size:clamp(22px,3vw,32px)">O que não entra agora.</h2>
+            <ul class="points">
+              <li>Instagram, Facebook, e-mail, SMS</li>
+              <li>IA conduzindo a conversa sozinha</li>
+              <li>Integração com agenda ou prontuário</li>
+              <li>App mobile nativo ou SSO</li>
+              <li>BI avançado e arquitetura desnecessária</li>
+            </ul>
+            <p class="sub" style="margin-top:20px;max-width:28ch">
+              Funcionalidade maior fora do contrato: cobrança por hora.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Comercial -->
+      <section class="slide center dark">
+        <div class="stack-center" style="width:min(860px,100%)">
+          <p class="eyebrow">Condições</p>
+          <h2 style="max-width:14ch;margin:0 auto">Pacote de lançamento.</h2>
+          <div class="deal-list">
+            <div class="deal-item">
+              <b>Entrega</b>
+              <span>Valor desta proposta: R$&nbsp;14.000 — 10 semanas, código e GitHub inclusos.</span>
+            </div>
+            <div class="deal-item">
+              <b>Desenvolvimento</b>
+              <span>Extras fora do pacote: renegociação ou R$&nbsp;120/h · assinatura/tokens de IA neste tipo de custo.</span>
+            </div>
+            <div class="deal-item">
+              <b>Operação</b>
+              <span>Meta e nuvem no nome da Cia da Vacina — independência da operação.</span>
+            </div>
+            <div class="deal-item">
+              <b>Suporte</b>
+              <span>3 a 6 meses para bugs e problemas de operação.</span>
+            </div>
+            <div class="deal-item">
+              <b>Propriedade</b>
+              <span>Código e GitHub passam a ser da Cia da Vacina — sem mensalidade de CRM.</span>
+            </div>
+          </div>
+          <p class="rate-pill">R$&nbsp;14.000 nesta proposta · suporte estendido pode revisar o valor</p>
+        </div>
+      </section>
+
+      <!-- Próximos passos -->
+      <section class="slide center dark">
+        <div class="stack-center" style="width:min(820px,100%)">
+          <p class="eyebrow">Próximos passos</p>
+          <h2 style="max-width:12ch;margin:0 auto">Para avançar.</h2>
+          <ul class="points" style="max-width:40ch;margin:28px auto 0;text-align:left">
+            <li>Validar o fluxo na POC</li>
+            <li>Confirmar o escopo das 10 semanas</li>
+            <li>Definir o prazo de suporte (3 ou 6 meses)</li>
+            <li>Alinhar acessos Meta, unidades e usuários-piloto</li>
+          </ul>
+          <p class="sub wide" style="margin:28px auto 0;text-align:center">
+            O que faltar, lista. Transformamos em plano fechado.
+          </p>
+        </div>
+      </section>
+
+      <!-- Fechamento -->
+      <section class="slide center dark">
+        <div>
+          <p class="eyebrow">Cia da Vacina</p>
+          <h1>Pronto para<br />as dez semanas.</h1>
+          <p class="sub" style="margin-left:auto;margin-right:auto">
+            POC para validar. Plano para entregar. Código e suporte para operar.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <div class="chrome">
+      <div id="counter">01 / 13</div>
+      <div class="nav">
+        <button type="button" id="prev" aria-label="Anterior">←</button>
+        <button type="button" id="next" aria-label="Próximo">→</button>
+      </div>
+    </div>
+
+    <script>
+      const slides = [...document.querySelectorAll(".slide")];
+      const bar = document.getElementById("bar");
+      const counter = document.getElementById("counter");
+      let i = 0;
+      function show(n) {
+        i = Math.max(0, Math.min(slides.length - 1, n));
+        slides.forEach((s, idx) => s.classList.toggle("active", idx === i));
+        bar.style.width = ((i + 1) / slides.length) * 100 + "%";
+        counter.textContent = String(i + 1).padStart(2, "0") + " / " + String(slides.length).padStart(2, "0");
+        history.replaceState(null, "", "#" + (i + 1));
+      }
+      const next = () => show(i + 1);
+      const prev = () => show(i - 1);
+      document.getElementById("next").onclick = next;
+      document.getElementById("prev").onclick = prev;
+      window.addEventListener("keydown", (e) => {
+        if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); next(); }
+        if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); prev(); }
+        if (e.key === "Home") show(0);
+        if (e.key === "End") show(slides.length - 1);
+      });
+      let tx = null;
+      window.addEventListener("touchstart", (e) => { tx = e.changedTouches[0].clientX; }, { passive: true });
+      window.addEventListener("touchend", (e) => {
+        if (tx == null) return;
+        const dx = e.changedTouches[0].clientX - tx;
+        if (Math.abs(dx) > 40) (dx < 0 ? next : prev)();
+        tx = null;
+      }, { passive: true });
+      const fromHash = Number(location.hash.replace("#", ""));
+      show(Number.isFinite(fromHash) && fromHash > 0 ? fromHash - 1 : 0);
+    </script>
+  </body>
+</html>

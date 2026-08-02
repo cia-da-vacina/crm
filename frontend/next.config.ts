@@ -1,16 +1,27 @@
 import type { NextConfig } from "next";
+import fs from "fs";
 import path from "path";
 import withPWAInit from "@ducanh2912/next-pwa";
 
-const frontendModules = path.resolve(__dirname, "node_modules");
+/**
+ * Resolve a package from this workspace or the monorepo root (npm hoists
+ * deps to the workspace root, so `frontend/node_modules/X` may not exist).
+ */
+function resolvePackage(name: string): string {
+  const candidates = [
+    path.resolve(__dirname, "node_modules", name),
+    path.resolve(__dirname, "..", "node_modules", name),
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return candidates[0];
+}
 
 const withPWA = withPWAInit({
   dest: "public",
   register: true,
-  // MSW + next-pwa both use service workers; keep PWA off while mocks own the SW.
-  disable:
-    process.env.NODE_ENV === "development" ||
-    process.env.NEXT_PUBLIC_USE_MOCKS === "true",
+  disable: process.env.NODE_ENV === "development",
   fallbacks: {
     document: "/~offline",
   },
@@ -29,8 +40,8 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      // Deduplicate ThemeProvider across package boundaries.
-      "styled-components": path.join(frontendModules, "styled-components"),
+      // Deduplicate ThemeProvider across package boundaries (workspaces hoist).
+      "styled-components": resolvePackage("styled-components"),
     };
     return config;
   },

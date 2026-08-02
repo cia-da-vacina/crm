@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ThemeProvider } from "styled-components";
+import { ThemeProvider, type DefaultTheme } from "styled-components";
 import {
   GlobalStyle,
   webDark,
@@ -18,7 +18,7 @@ export default function CiaThemeProvider({
   children,
   mode = "light",
 }: CiaThemeProviderProps) {
-  const theme = mode === "dark" ? webDark : webLight;
+  const theme = (mode === "dark" ? webDark : webLight) as DefaultTheme;
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyle />

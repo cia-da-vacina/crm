@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Esboço · Resumo contratual · CRM Cia da Vacina</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #14241c;
+      --muted: #4d6458;
+      --brand: #0f6b4c;
+      --line: #d5e3db;
+      --bg: #f7faf8;
+      --warn: #7a4a12;
+      --warn-bg: #fff7eb;
+      --warn-line: #e8c48a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #e8eee9;
+      font-family: "DM Sans", system-ui, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.5;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      background: #14241c;
+      color: #fff;
+      font-size: 10pt;
+    }
+    .toolbar button {
+      border: 0;
+      background: #0f6b4c;
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .page {
+      max-width: 210mm;
+      margin: 20px auto;
+      padding: 16mm 16mm 18mm;
+      background: #fff;
+      box-shadow: 0 8px 40px rgba(0,0,0,.08);
+    }
+    h1, h2, h3 {
+      font-family: "Fraunces", Georgia, serif;
+      font-weight: 650;
+      letter-spacing: -.02em;
+      line-height: 1.15;
+      color: var(--ink);
+    }
+    h1 { font-size: 22pt; margin: 0 0 6px; }
+    h2 {
+      font-size: 13pt;
+      margin: 20px 0 8px;
+      padding-bottom: 5px;
+      border-bottom: 1.5px solid var(--line);
+      break-after: avoid;
+    }
+    h3 { font-size: 11pt; margin: 14px 0 6px; color: var(--brand); }
+    p { margin: 0 0 8px; }
+    .eyebrow {
+      font-size: 8.5pt;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--brand);
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+    .lead { color: var(--muted); max-width: 62ch; }
+    .disclaimer {
+      margin: 14px 0 18px;
+      padding: 12px 14px;
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-line);
+      border-radius: 10px;
+      color: var(--warn);
+      font-size: 10pt;
+    }
+    .disclaimer strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 10.5pt;
+      color: #5c3608;
+    }
+    .meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 20px;
+      margin: 0 0 4px;
+      padding: 12px 14px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 9.5pt;
+    }
+    .meta div strong {
+      display: block;
+      font-size: 8pt;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--brand);
+      margin-bottom: 2px;
+    }
+    ul, ol { margin: 0 0 10px; padding-left: 1.15em; }
+    li { margin: 0 0 4px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 12px;
+      font-size: 9.5pt;
+    }
+    th, td {
+      border: 1px solid var(--line);
+      padding: 7px 9px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: var(--bg);
+      font-size: 8pt;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--brand);
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .box {
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+    }
+    .box h3 { margin-top: 0; }
+    .box.out { background: #fff; }
+    .footer {
+      margin-top: 22px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      font-size: 8.5pt;
+      color: var(--muted);
+    }
+    .sign {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 28px;
+    }
+    .sign div {
+      padding-top: 36px;
+      border-top: 1px solid var(--line);
+      font-size: 9.5pt;
+    }
+    .sign span { color: var(--muted); font-size: 8.5pt; }
+    @media print {
+      body { background: #fff; }
+      .toolbar { display: none; }
+      .page {
+        margin: 0;
+        padding: 12mm 14mm;
+        box-shadow: none;
+        max-width: none;
+      }
+      a { color: inherit; text-decoration: none; }
+    }
+    @media (max-width: 720px) {
+      .meta, .two-col, .sign { grid-template-columns: 1fr; }
+      .page { margin: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar no-print">
+    <span>Esboço resumido · não é contrato</span>
+    <button type="button" onclick="window.print()">Imprimir / PDF</button>
+  </div>
+
+  <article class="page">
+    <p class="eyebrow">Documento preparatório</p>
+    <h1>Esboço de resumo contratual</h1>
+    <p class="lead">
+      CRM multiunidade de atendimento omnichannel (WhatsApp, Instagram e Facebook) —
+      Cia da Vacina. Valor atualizado: R$&nbsp;16.100,00 + demais custos em nota;
+      suporte pós-entrega de 6 meses.
+    </p>
+
+    <div class="disclaimer">
+      <strong>Este documento é apenas um esboço.</strong>
+      Não constitui contrato, proposta vinculante, instrumento jurídico nem aceite formal.
+      Serve para alinhar entendimento entre as partes antes da redação do contrato definitivo.
+      Valores, prazos e condições só passam a valer após assinatura do contrato oficial.
+    </div>
+
+    <div class="meta">
+      <div>
+        <strong>Cliente</strong>
+        Cia da Vacina
+      </div>
+      <div>
+        <strong>Prestadores</strong>
+        Cristian Martini · Felipe Meneguzzi
+      </div>
+      <div>
+        <strong>Objeto (resumo)</strong>
+        CRM próprio · WhatsApp, Instagram e Facebook
+      </div>
+      <div>
+        <strong>Referência</strong>
+        Proposta comercial · alinhamento comercial atualizado
+      </div>
+      <div>
+        <strong>Prazo previsto</strong>
+        11,5 semanas + 6 meses de suporte
+      </div>
+      <div>
+        <strong>Valor de referência</strong>
+        R$&nbsp;16.100,00 + demais custos em nota
+      </div>
+    </div>
+
+    <h2>1. Objeto</h2>
+    <p>
+      Desenvolvimento, implantação assistida e transferência de um CRM próprio
+      multiunidade para atendimento das unidades da Cia da Vacina nos canais
+      WhatsApp, Instagram e Facebook (chat e controle do contato, com histórico unificado),
+      incluindo triagem inicial por IA, funil comercial, painéis, treinamento,
+      documentação e entrega do código-fonte.
+    </p>
+
+    <h2>2. Escopo desta versão</h2>
+    <div class="box">
+      <ul>
+        <li>Login, usuários e permissões por papel</li>
+        <li>5 unidades Cia da Vacina</li>
+        <li>Canais: WhatsApp, Instagram e Facebook (chat e controle do contato)</li>
+        <li>Inbox unificado, histórico e templates (quando aplicável)</li>
+        <li>IA de triagem + passagem ao atendente (com desligar)</li>
+        <li>Funil comercial e motivos de não conversão</li>
+        <li>Scripts / POPs e follow-up básico</li>
+        <li>Dashboard por unidade e consolidado</li>
+        <li>Configurações Meta e auditoria básica</li>
+        <li>Demos semanais, treinamento e documentação</li>
+        <li>Código-fonte e organização no GitHub</li>
+        <li>6 meses de suporte pós-entrega (bugs e operação)</li>
+      </ul>
+    </div>
+
+    <h2>3. Plano e prazo</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Fase</th>
+          <th>Período</th>
+          <th>Objetivo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Construir</strong></td>
+          <td>Semanas 1–7</td>
+          <td>Base do sistema, canais Meta (WhatsApp, Instagram e Facebook) e fluxo ponta a ponta</td>
+        </tr>
+        <tr>
+          <td><strong>Testar</strong></td>
+          <td>Semanas 8–9</td>
+          <td>Validação com a operação, segurança e homologação</td>
+        </tr>
+        <tr>
+          <td><strong>Colocar em uso</strong></td>
+          <td>Semanas 10–11,5</td>
+          <td>Treinamento, primeiros dias reais, entrega do código</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Trabalho em ciclos semanais, com demonstração do que ficou pronto ao fim de cada semana.
+      Prazo de referência: <strong>11,5 semanas</strong>. Mudanças fora do escopo combinado entram por renegociação.
+    </p>
+
+    <h2>4. Condições comerciais (referência)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Alinhamento comercial atual</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Valor do pacote</td>
+          <td>R$&nbsp;16.100,00 pelo desenvolvimento do escopo (WhatsApp, Instagram e Facebook), demos, treinamento, código, GitHub e suporte a bugs no prazo contratado</td>
+        </tr>
+        <tr>
+          <td>Demais custos em nota</td>
+          <td>Custos operacionais e de ferramentas (ex.: hospedagem, banco, Meta/APIs, provedor de IA e outros necessários à operação) podem constar em nota à parte ou na mesma nota, conforme combinado — não fazem parte do valor fixo de R$&nbsp;16.100,00</td>
+        </tr>
+        <tr>
+          <td>Hospedagem e operação</td>
+          <td>Custos de hospedagem, host, infraestrutura em nuvem, banco de dados, Meta/APIs e provedor de IA ficam sob responsabilidade da Cia da Vacina (contas e cobrança em nome dela)</td>
+        </tr>
+        <tr>
+          <td>Formas de pagamento</td>
+          <td>50% no início e 50% na entrega com aceite; ou três marcos 40% / 30% / 30%</td>
+        </tr>
+        <tr>
+          <td>Extras fora do escopo</td>
+          <td>Renegociação de valor fechado ou R$&nbsp;120,00/hora, com estimativa prévia</td>
+        </tr>
+        <tr>
+          <td>Suporte pós-entrega</td>
+          <td><strong>6 meses</strong> para bugs e problemas de operação</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>5. Propriedade</h2>
+    <p>
+      Ao término do projeto e quitação das condições acordadas, a Cia da Vacina recebe
+      acesso total ao código-fonte e à organização no GitHub referentes ao escopo entregue.
+      Não há mensalidade de CRM de terceiros neste modelo.
+    </p>
+
+    <h2>6. Critérios de aceite (referência)</h2>
+    <ol>
+      <li>O time piloto atende WhatsApp, Instagram e Facebook pelo CRM nas unidades combinadas.</li>
+      <li>A IA de triagem funciona e pode ser desligada, passando ao humano.</li>
+      <li>Funil, follow-up, scripts e painéis básicos estão utilizáveis.</li>
+      <li>Código-fonte e GitHub foram transferidos à Cia da Vacina.</li>
+      <li>Documentação mínima e treinamento do piloto foram realizados.</li>
+    </ol>
+
+    <div class="disclaimer" style="margin-top:18px">
+      <strong>Lembrete final</strong>
+      Este arquivo é um esboço interno de alinhamento. Qualquer alteração adicional
+      (ex.: Google Ads, novos canais ou mudança de valor/prazo) só integra o acordo
+      quando estiver escrita e assinada no contrato definitivo.
+    </div>
+
+    <div class="sign">
+      <div>
+        <strong>Cristian Martini</strong><br />
+        <span>Frontend · produto web</span>
+      </div>
+      <div>
+        <strong>Felipe Meneguzzi</strong><br />
+        <span>Backend · integrações</span>
+      </div>
+    </div>
+
+    <p class="footer">
+      Esboço atualizado em 31/07/2026 (valor R$&nbsp;16.100 + custos em nota; suporte 6 meses;
+      canais WhatsApp, Instagram e Facebook). Não substitui assessoria jurídica nem o contrato formal.
+    </p>
+  </article>
+</body>
+</html>

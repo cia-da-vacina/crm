@@ -2,13 +2,17 @@
 
 ## Como rodar
 
+O frontend **não tem mais mocks**. É obrigatório subir a API.
+
 ```bash
 # Terminal 1 — API
 cd backend
 go run ./cmd/api
 
-# Terminal 2 — Frontend (MSW ligado por padrão)
+# Terminal 2 — Frontend
 cd frontend
+cp .env.example .env.local   # API_URL=http://localhost:8080/api/v1
+npm install
 npm run dev
 ```
 
@@ -17,8 +21,7 @@ Abra http://localhost:3000
 Login: `admin@ciadavacina.com.br` / `admin123`  
 Atendente: `atendente@ciadavacina.com.br` / `agent123`
 
-`NEXT_PUBLIC_USE_MOCKS=true` (default): dados no browser via MSW.  
-`NEXT_PUBLIC_USE_MOCKS=false`: usa a API Go em `:8080` (seed idêntico).
+(Credenciais do seed do backend em ambiente local.)
 
 ## Roteiro da demo (5–8 min)
 
@@ -30,8 +33,9 @@ Atendente: `atendente@ciadavacina.com.br` / `agent123`
 6. **Não fechado** — exige motivo (preço, sem retorno…)  
 7. **Follow-ups** — fila de retomada; abrir conversa / concluir  
 8. **Dashboard** — KPIs da unidade + consolidado 5 unidades  
-9. **POPs** — biblioteca de procedimentos  
-10. **WhatsApp** — settings Meta (token mascarado, flag IA)
+9. **Agenda** — campanhas de IA no calendário da unidade  
+10. **POPs** — biblioteca de procedimentos  
+11. **Canais Meta** — settings Meta (token mascarado, flag IA)
 
 ## Escopo da POC
 
@@ -40,4 +44,4 @@ Atendente: `atendente@ciadavacina.com.br` / `agent123`
 | Auth, unidades, inbox, thread | Meta WhatsApp real |
 | IA triagem (seed + banner) | LLM real |
 | Claim, envio, pipeline, motivos | Webhook produção |
-| Follow-ups, dashboard, POPs, settings | Persistência Postgres |
+| Follow-ups, dashboard, POPs, agenda, settings | Persistência Postgres |

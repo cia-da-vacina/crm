@@ -1,6 +1,8 @@
 # Sprint 1 — Kickoff
 
-**Objetivo:** Fundação Auth/Units + contratos + shell FE com mocks.
+> **Nota (2026-08-02):** documento histórico da fundação. O frontend **não usa mais MSW/mocks**; localmente rode backend + `API_URL`. Ver [`POC-DEMO.md`](./POC-DEMO.md) e [`FRONTEND-ARCHITECTURE.md`](./FRONTEND-ARCHITECTURE.md).
+
+**Objetivo (na época):** Fundação Auth/Units + contratos + shell FE com mocks.
 
 ## Entregue
 

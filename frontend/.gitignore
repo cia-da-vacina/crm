@@ -50,5 +50,6 @@ public/workbox-*.js.map
 public/swe-worker-*.js
 public/swe-worker-*.js.map
 
-.vercel
-.env*
+# PWA offline fallback (hashed filename regenerated on build)
+public/fallback-*.js
+

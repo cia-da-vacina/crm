@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { DM_Sans, Fraunces } from "next/font/google";
 import { Providers } from "@/components/providers";
+import { APP_DESCRIPTION, APP_NAME } from "@/lib/constants";
 
 const sans = DM_Sans({
   variable: "--font-sans",
@@ -12,15 +13,11 @@ const display = Fraunces({
   subsets: ["latin"],
 });
 
-const APP_NAME = "CRM Cia da Vacina";
-const APP_DESCRIPTION =
-  "Atendimento WhatsApp e pipeline comercial das unidades";
-
 export const metadata: Metadata = {
   applicationName: APP_NAME,
   title: {
     default: APP_NAME,
-    template: `%s · ${APP_NAME}`,
+    template: `%s | ${APP_NAME}`,
   },
   description: APP_DESCRIPTION,
   manifest: "/manifest.webmanifest",
@@ -34,7 +31,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
       { url: "/icons/icon-16.png", sizes: "16x16", type: "image/png" },
       { url: "/icons/icon-32.png", sizes: "32x32", type: "image/png" },
       { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },

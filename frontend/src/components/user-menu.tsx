@@ -1,18 +1,14 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import styled from "styled-components";
-import {
-  Avatar,
-  Box,
-  Button,
-  Flex,
-  SelectField,
-  Text,
-} from "@cia-da-vacina/design-system";
-import { ChevronDownIcon, LogoutIcon } from "@cia-da-vacina/icon-system";
-import { useAuth } from "@/contexts/auth-context";
-import type { UserRole } from "@/lib/types";
+import { Avatar, Text } from "@cia-da-vacina/design-system";
+import { ChevronDownIcon, LogoutIcon, Moon01, Sun } from "@cia-da-vacina/icon-system";
+import { easeOut } from "@/lib/motion";
+import { useAuth } from "@/providers/auth-provider";
+import { useThemeMode } from "@/providers/theme-provider";
+import type { UserRole } from "@/domain";
 
 const ROLE_LABELS: Record<UserRole, string> = {
   admin: "Administrador",
@@ -21,11 +17,7 @@ const ROLE_LABELS: Record<UserRole, string> = {
   agent: "Atendente",
 };
 
-function avatarUrl(seed: string) {
-  return `https://api.dicebear.com/9.x/notionists/svg?seed=${encodeURIComponent(seed)}&backgroundColor=d4ece4`;
-}
-
-const Trigger = styled.button`
+const Trigger = styled(motion.button)`
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -37,7 +29,7 @@ const Trigger = styled.button`
   cursor: pointer;
   font-family: ${({ theme }) => theme.fonts.body};
   color: ${({ theme }) => theme.colors["text.primary"]};
-  transition: background 120ms ease, border-color 120ms ease;
+  transition: background 160ms ease, border-color 160ms ease;
 
   &:hover {
     background: ${({ theme }) => theme.colors["bg.surface.muted"]};
@@ -67,33 +59,117 @@ const Meta = styled.div`
   }
 `;
 
-const Chevron = styled.span`
+const Chevron = styled(motion.span)`
   display: none;
+  transform-origin: center;
 
   @media (min-width: 640px) {
     display: inline-flex;
   }
 `;
 
-const Panel = styled.div`
+const Panel = styled(motion.div)`
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
   z-index: ${({ theme }) => theme.zIndices.dropdown};
-  width: min(260px, calc(100vw - 24px));
+  width: min(280px, calc(100vw - 24px));
   padding: ${({ theme }) => theme.space[3]};
   background: ${({ theme }) => theme.colors["bg.surface"]};
   border: 1px solid ${({ theme }) => theme.colors["border.default"]};
   border-radius: ${({ theme }) => theme.radii.md};
   box-shadow: ${({ theme }) => theme.shadows.lg};
+  transform-origin: top right;
+  overflow: hidden;
+`;
+
+const Header = styled(motion.div)`
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  margin-bottom: ${({ theme }) => theme.space[3]};
+`;
+
+const HeaderMeta = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding-top: 2px;
+  line-height: 1.3;
+`;
+
+const Divider = styled(motion.div)`
+  height: 1px;
+  margin: 0 0 ${({ theme }) => theme.space[2]};
+  background: ${({ theme }) => theme.colors["border.subtle"]};
+`;
+
+const Actions = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`;
+
+const MenuAction = styled(motion.button)`
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  align-items: center;
+  column-gap: 10px;
+  width: 100%;
+  margin: 0;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: ${({ theme }) => theme.radii.sm};
+  background: transparent;
+  color: ${({ theme }) => theme.colors["text.brand"]};
+  font-family: ${({ theme }) => theme.fonts.body};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors["bg.surface.muted"]};
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: ${({ theme }) => theme.shadows.focus};
+  }
+`;
+
+const MenuIcon = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+
+  & > svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
 `;
 
 const Wrap = styled.div`
   position: relative;
 `;
 
+const panelTransition = {
+  duration: 0.22,
+  ease: easeOut,
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 6 },
+  show: { opacity: 1, y: 0 },
+};
+
 export function UserMenu() {
-  const { user, logout, units, activeUnitId, setUnit } = useAuth();
+  const { user, logout } = useAuth();
+  const { mode, toggle } = useThemeMode();
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const menuId = useId();
@@ -117,8 +193,6 @@ export function UserMenu() {
   if (!user) return null;
 
   const roleLabel = ROLE_LABELS[user.role] ?? user.role;
-  const photo = avatarUrl(user.email || user.id);
-  const activeUnit = units.find((u) => u.id === activeUnitId);
 
   return (
     <Wrap ref={wrapRef}>
@@ -128,8 +202,10 @@ export function UserMenu() {
         aria-expanded={open}
         aria-controls={menuId}
         onClick={() => setOpen((v) => !v)}
+        whileTap={{ scale: 0.98 }}
+        transition={{ duration: 0.12 }}
       >
-        <Avatar name={user.name} src={photo} size={32} alt="" />
+        <Avatar name={user.name} size={32} alt="" />
         <Meta>
           <Text
             fontSize="xs"
@@ -153,71 +229,109 @@ export function UserMenu() {
               whiteSpace: "nowrap",
             }}
           >
-            {activeUnit?.name ?? roleLabel}
+            {roleLabel}
           </Text>
         </Meta>
-        <Chevron>
+        <Chevron
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.22, ease: easeOut }}
+        >
           <ChevronDownIcon size="xs" fill="text.muted" />
         </Chevron>
       </Trigger>
 
-      {open ? (
-        <Panel id={menuId} role="menu">
-          <Flex gap={3} alignItems="center" mb={3}>
-            <Avatar name={user.name} src={photo} size={44} alt="" />
-            <Flex flexDirection="column" style={{ minWidth: 0, lineHeight: 1.25 }}>
-              <Text fontWeight="semibold" fontSize="sm">
-                {user.name}
-              </Text>
-              <Text fontSize="xs" muted>
-                {roleLabel}
-              </Text>
-              <Text fontSize="xs" muted style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-                {user.email}
-              </Text>
-            </Flex>
-          </Flex>
-
-          {units.length > 0 ? (
-            <Box mb={3}>
-              <Text as="label" htmlFor="user-menu-unit" fontSize="xs" muted>
-                Unidade ativa
-              </Text>
-              <Box mt={1}>
-                <SelectField
-                  id="user-menu-unit"
-                  fieldSize="sm"
-                  fullWidth
-                  appearance="default"
-                  value={activeUnitId ?? ""}
-                  onChange={(e) => setUnit(e.target.value)}
-                  options={units.map((u) => ({ value: u.id, label: u.name }))}
-                />
-              </Box>
-            </Box>
-          ) : null}
-
-          <Box
-            height="1px"
-            bg="border.subtle"
-            mb={2}
-            aria-hidden
-          />
-
-          <Button
-            variant="ghost"
-            size="sm"
-            fullWidth
-            leftIcon={<LogoutIcon size="sm" />}
-            onClick={() => {
-              setOpen(false);
-              void logout();
-            }}
+      <AnimatePresence>
+        {open ? (
+          <Panel
+            id={menuId}
+            role="menu"
+            initial={{ opacity: 0, y: -8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -6, scale: 0.98 }}
+            transition={panelTransition}
           >
-            Sair da conta
-          </Button>
-        </Panel>
-      ) : null}
+            <Header
+              variants={itemVariants}
+              initial="hidden"
+              animate="show"
+              transition={{ duration: 0.2, ease: easeOut, delay: 0.03 }}
+            >
+              <Avatar name={user.name} size={40} alt="" />
+              <HeaderMeta>
+                <Text fontWeight="semibold" fontSize="sm">
+                  {user.name}
+                </Text>
+                <Text fontSize="xs" muted>
+                  {roleLabel}
+                </Text>
+                <Text
+                  fontSize="xs"
+                  muted
+                  style={{
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {user.email}
+                </Text>
+              </HeaderMeta>
+            </Header>
+
+            <Divider
+              aria-hidden
+              initial={{ scaleX: 0, opacity: 0 }}
+              animate={{ scaleX: 1, opacity: 1 }}
+              transition={{ duration: 0.22, ease: easeOut, delay: 0.06 }}
+              style={{ transformOrigin: "left center" }}
+            />
+
+            <Actions
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: {},
+                show: {
+                  transition: { staggerChildren: 0.045, delayChildren: 0.08 },
+                },
+              }}
+            >
+              <MenuAction
+                type="button"
+                role="menuitem"
+                onClick={() => toggle()}
+                variants={itemVariants}
+                transition={{ duration: 0.2, ease: easeOut }}
+                whileHover={{ x: 2 }}
+                whileTap={{ scale: 0.99 }}
+              >
+                <MenuIcon>
+                  {mode === "dark" ? <Sun size="sm" /> : <Moon01 size="sm" />}
+                </MenuIcon>
+                {mode === "dark" ? "Tema claro" : "Tema escuro"}
+              </MenuAction>
+
+              <MenuAction
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setOpen(false);
+                  void logout();
+                }}
+                variants={itemVariants}
+                transition={{ duration: 0.2, ease: easeOut }}
+                whileHover={{ x: 2 }}
+                whileTap={{ scale: 0.99 }}
+              >
+                <MenuIcon>
+                  <LogoutIcon size="sm" />
+                </MenuIcon>
+                Sair da conta
+              </MenuAction>
+            </Actions>
+          </Panel>
+        ) : null}
+      </AnimatePresence>
     </Wrap>
   );
 }

@@ -82,10 +82,16 @@ const crmOverlay = {
   "mode.human.text": raw.evergreen[700],
 
   // nav
-  "nav.bg": "rgba(255,255,255,0.88)",
+  "nav.bg": "rgba(255,255,255,0.92)",
+  "nav.sidebar.bg": raw.mist[25],
+  "nav.sidebar.border": raw.mist[100],
   "nav.item.active.bg": raw.evergreen[50],
   "nav.item.active.text": raw.evergreen[700],
   "nav.item.text": raw.mist[600],
+  "nav.item.hover.bg": raw.mist[50],
+  "toast.bg": raw.mist[900],
+  "toast.text": raw.base.white,
+  "toast.success.bg": raw.evergreen[700],
 } as const;
 
 export default crmOverlay;

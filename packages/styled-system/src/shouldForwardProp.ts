@@ -21,6 +21,7 @@ const STYLE_PROPS = new Set([
   "textAlign", "fontStyle", "textTransform", "textDecoration",
   "boxShadow", "textShadow",
   "variant", "cursor",
+  "muted",
 ]);
 
 export function shouldForwardProp(prop: string): boolean {

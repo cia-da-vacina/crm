@@ -37,6 +37,11 @@ Banco: **PostgreSQL**. Sem migrations neste documento — apenas modelagem lógi
 | name | TEXT | NOT NULL |
 | code | TEXT | UNIQUE, NOT NULL |
 | timezone | TEXT | NOT NULL DEFAULT 'America/Sao_Paulo' |
+| address | TEXT | NOT NULL |
+| city | TEXT | NOT NULL |
+| district | TEXT | nullable (bairro) |
+| complement | TEXT | nullable (sala, andar) |
+| reference | TEXT | nullable (ponto de referência) |
 | active | BOOLEAN | NOT NULL DEFAULT true |
 | created_at | TIMESTAMPTZ | NOT NULL DEFAULT now() |
 

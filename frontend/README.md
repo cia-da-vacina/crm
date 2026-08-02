@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CRM Cia da Vacina — Frontend
 
-## Getting Started
+Frontend do CRM de atendimento multicanal (WhatsApp, Instagram e Facebook Messenger) da Cia da Vacina: inbox com triagem por IA + handoff humano, fila de engagements de rede social e pipeline comercial por unidade.
 
-First, run the development server:
+Next.js 15 (App Router) + React 19 + TypeScript. O BFF fala com o backend via `API_URL`.
+
+## Como rodar
+
+1. Suba o backend (API em `:8080`).
+2. Configure o frontend:
 
 ```bash
+cp .env.example .env.local
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+```env
+API_URL=http://localhost:8080/api/v1
+COOKIE_SECURE=false
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Abra [http://localhost:3000](http://localhost:3000).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Se o seed do backend ainda cria os usuários de demonstração, use:
 
-## Learn More
+| Usuário | Senha |
+|---|---|
+| `admin@ciadavacina.com.br` | `admin123` |
+| `atendente@ciadavacina.com.br` | `agent123` |
 
-To learn more about Next.js, take a look at the following resources:
+## Arquitetura (resumo)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **BFF de autenticação**: `POST /api/auth/login` autentica no backend e grava a sessão em cookies **httpOnly** (`cv_access`/`cv_refresh`) — o browser nunca vê o token.
+- **Proxy autenticado**: toda chamada de domínio do browser vai para `/api/proxy/{path}`, que injeta `Authorization: Bearer` e repassa para `{API_URL}/{path}`.
+- **`middleware.ts`**: guarda de rota no Edge — redireciona para `/login` sem sessão, e para `/inbox` se já autenticado.
+- **PWA**: instalável (manifest + service worker), com fallback offline.
+- **Design system**: componentes/tokens/ícones vêm dos pacotes internos `@cia-da-vacina/*`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Detalhes em [`../docs/FRONTEND-ARCHITECTURE.md`](../docs/FRONTEND-ARCHITECTURE.md).
 
-## Deploy on Vercel
+## Notas de segurança
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Nenhuma variável sensível é `NEXT_PUBLIC_*`. `API_URL` e `COOKIE_SECURE` são lidos apenas no servidor (`src/server/env.ts`).
+- Tokens de canal Meta e chaves de IA nunca trafegam para o cliente — a UI só recebe `token_masked`.
+- Sessão de usuário vive exclusivamente em cookies `httpOnly`/`SameSite=Lax`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Scripts
+
+| Script | Descrição |
+|---|---|
+| `npm run dev` | Sobe o servidor de desenvolvimento (`next dev -H 0.0.0.0`). |
+| `npm run build` | Build de produção. |
+| `npm run start` | Sobe o build de produção (`next start -H 0.0.0.0`). |
+| `npm run lint` | ESLint (`next lint`). |
+| `npm run typecheck` | Checagem de tipos sem emitir (`tsc --noEmit`). |
+
+## Documentação
+
+- [`docs/BACKEND-CONTRACT.md`](../docs/BACKEND-CONTRACT.md) — contrato de API que o backend implementa.
+- [`docs/PRODUCT-V2.md`](../docs/PRODUCT-V2.md) — visão de produto, personas e jornadas.
+- [`docs/FRONTEND-ARCHITECTURE.md`](../docs/FRONTEND-ARCHITECTURE.md) — arquitetura detalhada do frontend.
+- [`docs/APPROVED-SCOPE.md`](../docs/APPROVED-SCOPE.md) — escopo aprovado e histórico de mudanças.

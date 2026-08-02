@@ -1,6 +1,11 @@
 import { createGlobalStyle } from "styled-components";
 import raw from "../global/colors";
 
+function isDarkTheme(theme: { name?: string } | undefined): boolean {
+  const name = theme?.name ?? "";
+  return name.toLowerCase().includes("dark");
+}
+
 const GlobalStyle = createGlobalStyle`
   *, *::before, *::after {
     box-sizing: border-box;
@@ -17,10 +22,20 @@ const GlobalStyle = createGlobalStyle`
     font-size: ${({ theme }) => theme?.fontSizes?.body ?? "14px"};
     line-height: ${({ theme }) => theme?.lineHeights?.normal ?? 1.5};
     color: ${({ theme }) => theme?.colors?.["text.primary"] ?? "#1B2420"};
-    background:
-      radial-gradient(1100px 480px at 8% -12%, ${raw.evergreen[50]}, transparent 55%),
-      radial-gradient(900px 420px at 92% 0%, ${raw.mist[50]}, transparent 50%),
-      ${({ theme }) => theme?.colors?.["bg.canvas"] ?? raw.mist[25]};
+    background: ${({ theme }) => {
+      if (isDarkTheme(theme)) {
+        return `
+          radial-gradient(1100px 480px at 8% -12%, rgba(15, 107, 76, 0.18), transparent 55%),
+          radial-gradient(900px 420px at 92% 0%, rgba(43, 54, 49, 0.45), transparent 50%),
+          ${theme?.colors?.["bg.canvas"] ?? raw.mist[950]}
+        `;
+      }
+      return `
+        radial-gradient(1100px 480px at 8% -12%, ${raw.evergreen[50]}, transparent 55%),
+        radial-gradient(900px 420px at 92% 0%, ${raw.mist[50]}, transparent 50%),
+        ${theme?.colors?.["bg.canvas"] ?? raw.mist[25]}
+      `;
+    }};
     -webkit-font-smoothing: antialiased;
   }
 
@@ -34,8 +49,10 @@ const GlobalStyle = createGlobalStyle`
   }
 
   ::selection {
-    background: ${raw.evergreen[100]};
-    color: ${raw.evergreen[900]};
+    background: ${({ theme }) =>
+      isDarkTheme(theme) ? raw.evergreen[800] : raw.evergreen[100]};
+    color: ${({ theme }) =>
+      isDarkTheme(theme) ? raw.evergreen[100] : raw.evergreen[900]};
   }
 `;
 

@@ -8,6 +8,7 @@ export { User01 as UserIcon } from "./icons/generated/User01";
 export { Users01 as UsersIcon } from "./icons/generated/Users01";
 export { Building07 as BuildingIcon } from "./icons/generated/Building07";
 export { BarChart01 as ChartIcon } from "./icons/generated/BarChart01";
+export { Calendar as CalendarIcon } from "./icons/generated/Calendar";
 export { Clock as ClockIcon } from "./icons/generated/Clock";
 export { SearchLg as SearchIcon } from "./icons/generated/SearchLg";
 export { Settings01 as SettingsIcon } from "./icons/generated/Settings01";

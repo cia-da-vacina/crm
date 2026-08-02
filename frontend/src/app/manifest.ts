@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
+import { APP_DESCRIPTION, APP_NAME } from "@/lib/constants";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "CRM Cia da Vacina",
+    name: APP_NAME,
     short_name: "Cia Vacina",
-    description:
-      "Atendimento WhatsApp, triagem com IA e pipeline comercial das unidades",
+    description: APP_DESCRIPTION,
     start_url: "/",
     scope: "/",
     display: "standalone",

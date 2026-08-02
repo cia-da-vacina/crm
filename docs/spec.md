@@ -4,7 +4,8 @@
 > **Data de aprovação:** 2026-07-14  
 > **Canal MVP:** WhatsApp Meta Cloud API  
 > **IA MVP:** Triagem inicial + handoff humano  
-> **Equipe:** Felipe (Backend/Go) · Cristian (Frontend/Next.js)
+> **Equipe:** Felipe (Backend/Go) · Cristian (Frontend/Next.js)  
+> **Nota (2026-08-02):** menções a MSW/mocks neste documento são históricas. O frontend atual consome só o backend via BFF — ver [`FRONTEND-ARCHITECTURE.md`](./FRONTEND-ARCHITECTURE.md) e [`PRODUCT-V2.md`](./PRODUCT-V2.md) (canais ampliados).
 
 ---
 

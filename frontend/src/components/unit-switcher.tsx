@@ -1,7 +1,7 @@
 "use client";
 
 import { SelectField } from "@cia-da-vacina/design-system";
-import { useAuth } from "@/contexts/auth-context";
+import { useAuth } from "@/providers/auth-provider";
 
 export function UnitSwitcher() {
   const { units, activeUnitId, setUnit } = useAuth();

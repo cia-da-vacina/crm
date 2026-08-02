@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button, Flex, Text } from "@cia-da-vacina/design-system";
+import { STORAGE } from "@/lib/constants";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -39,7 +40,7 @@ export function InstallPrompt() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const dismissed = sessionStorage.getItem("pwa-install-dismissed");
+    const dismissed = sessionStorage.getItem(STORAGE.PWA_INSTALL_DISMISSED);
     if (dismissed) return;
 
     function onBeforeInstall(e: Event) {
@@ -65,7 +66,7 @@ export function InstallPrompt() {
           size="sm"
           variant="ghost"
           onClick={() => {
-            sessionStorage.setItem("pwa-install-dismissed", "1");
+            sessionStorage.setItem(STORAGE.PWA_INSTALL_DISMISSED, "1");
             setVisible(false);
           }}
         >

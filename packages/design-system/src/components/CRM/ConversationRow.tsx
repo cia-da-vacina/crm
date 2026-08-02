@@ -26,7 +26,6 @@ const Row = styled.button<{ $selected?: boolean }>`
   gap: ${({ theme }) => theme.space[3]};
   padding: ${({ theme }) => `${theme.space[3]} ${theme.space[4]}`};
   border: 0;
-  border-bottom: 1px solid ${({ theme }) => theme.colors["border.subtle"]};
   background: ${({ theme, $selected }) =>
     $selected ? theme.colors["bg.brand.subtle"] : theme.colors["bg.surface"]};
   text-align: left;
@@ -35,10 +34,6 @@ const Row = styled.button<{ $selected?: boolean }>`
 
   &:hover {
     background: ${({ theme }) => theme.colors["bg.surface.muted"]};
-  }
-
-  &:last-child {
-    border-bottom: 0;
   }
 `;
 

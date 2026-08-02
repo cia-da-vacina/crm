@@ -35,7 +35,7 @@ const crmOverlay = {
   "button.primary.bg": raw.evergreen[500],
   "button.primary.bg.hover": raw.evergreen[400],
   "button.primary.bg.active": raw.evergreen[300],
-  "button.primary.text": raw.mist[950],
+  "button.primary.text": raw.base.white,
   "button.secondary.bg": raw.mist[800],
   "button.secondary.bg.hover": raw.mist[700],
   "button.secondary.border": raw.mist[600],
@@ -65,15 +65,21 @@ const crmOverlay = {
   "stage.nao_fechado.bg": raw.coral[700],
   "stage.nao_fechado.text": raw.coral[100],
 
-  "mode.ai.bg": raw.sand[500],
-  "mode.ai.text": raw.sand[50],
+  "mode.ai.bg": "#1C2830",
+  "mode.ai.text": raw.sky[300],
   "mode.human.bg": raw.evergreen[800],
   "mode.human.text": raw.evergreen[100],
 
   "nav.bg": "rgba(16,22,18,0.92)",
+  "nav.sidebar.bg": raw.mist[950],
+  "nav.sidebar.border": raw.mist[800],
   "nav.item.active.bg": raw.evergreen[900],
   "nav.item.active.text": raw.evergreen[200],
   "nav.item.text": raw.mist[300],
+  "nav.item.hover.bg": raw.mist[800],
+  "toast.bg": raw.mist[100],
+  "toast.text": raw.mist[900],
+  "toast.success.bg": raw.evergreen[600],
 } as const;
 
 export default crmOverlay;

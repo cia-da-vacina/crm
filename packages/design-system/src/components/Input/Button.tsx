@@ -108,12 +108,13 @@ const StyledButton = styled.button<{
   ${({ $variant }) => variants[$variant]}
 
   &:disabled {
-    opacity: 0.55;
+    opacity: 0.45;
     cursor: not-allowed;
+    filter: grayscale(0.15);
   }
 
   &:active:not(:disabled) {
-    transform: translateY(0.5px);
+    transform: scale(0.98);
   }
 
   &:focus-visible {
