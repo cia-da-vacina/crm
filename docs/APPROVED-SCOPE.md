@@ -3,7 +3,7 @@
 **Data original:** 2026-07-14
 **Revisão:** 2026-08-02 — expansão de canais (mudança de escopo em relação ao MVP original)
 **Produto:** CRM Cia da Vacina
-**Referência:** [spec.md](./spec.md) · [PRODUCT-V2.md](./PRODUCT-V2.md) · [BACKEND-CONTRACT.md](./BACKEND-CONTRACT.md)
+**Referência:** [PRODUCT-V2.md](./PRODUCT-V2.md) · [BACKEND-CONTRACT.md](./BACKEND-CONTRACT.md) · [FRONTEND-ARCHITECTURE.md](./FRONTEND-ARCHITECTURE.md)
 
 ## Decisões do stakeholder
 
@@ -53,4 +53,4 @@ A regra de **triagem por IA antes de qualquer resposta humana** e o **handoff ob
 
 ## Critério de aceite do escopo
 
-Este documento + `docs/spec.md` + `docs/PRODUCT-V2.md` são a fonte da verdade. Mudanças de escopo exigem atualização explícita aqui e no backlog.
+Este documento + [`PRODUCT-V2.md`](./PRODUCT-V2.md) + [`BACKEND-CONTRACT.md`](./BACKEND-CONTRACT.md) são a fonte da verdade. Mudanças de escopo exigem atualização explícita aqui.

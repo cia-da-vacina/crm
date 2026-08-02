@@ -3,8 +3,9 @@ info:
   title: CRM Cia da Vacina API
   version: 0.1.0
   description: |
-    Contrato Sprint 1+ — Auth, Users, Units, Me.
-    Endpoints de Inbox/WhatsApp entram nas sprints seguintes mantendo este estilo.
+    Contrato OpenAPI parcial — Auth, Users, Units, Me (+ trechos de Inbox).
+    Domínio completo (Inbox, Engagements, Customers, Follow-ups, POPs, Dashboard,
+    Meta, Webhooks) está documentado em docs/BACKEND-CONTRACT.md.
 servers:
   - url: http://localhost:8080/api/v1
     description: Local API

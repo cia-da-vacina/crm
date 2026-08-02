@@ -1,8 +1,8 @@
 # CRM Cia da Vacina
 
-CRM de atendimento multicanal (WhatsApp, Instagram e Facebook Messenger) com triagem por IA + handoff humano — frontend Next.js de produção (sem mocks) + backend Go.
+CRM de atendimento multicanal (WhatsApp, Instagram e Facebook Messenger) com triagem por IA + handoff humano — frontend Next.js + backend Go.
 
-O frontend **não inclui mais mocks (MSW)**: todo dado vem de um backend real através de um BFF de autenticação (cookies httpOnly, sem token exposto ao browser) e de um proxy autenticado (`/api/proxy/*`). Ver [`docs/FRONTEND-ARCHITECTURE.md`](./docs/FRONTEND-ARCHITECTURE.md) e [`docs/BACKEND-CONTRACT.md`](./docs/BACKEND-CONTRACT.md).
+O frontend fala com o backend via BFF (cookies httpOnly + proxy `/api/proxy/*`). Ver [`docs/FRONTEND-ARCHITECTURE.md`](./docs/FRONTEND-ARCHITECTURE.md) e [`docs/BACKEND-CONTRACT.md`](./docs/BACKEND-CONTRACT.md).
 
 ## Repositório
 
@@ -18,18 +18,21 @@ go run ./cmd/api
 # Terminal 2 — Frontend
 cd frontend
 cp .env.example .env.local
-# defina API_URL apontando para o backend acima
+# API_URL=http://localhost:8080/api/v1
 npm install
 npm run dev
 ```
 
-Abra http://localhost:3000. É necessário o backend rodando com um seed de usuários — se o seed do backend ainda cria os usuários de demonstração (`admin@ciadavacina.com.br` / `admin123`, `atendente@ciadavacina.com.br` / `agent123`), essas credenciais continuam válidas em ambiente local; não são mais aplicáveis a uma "demo online" com mocks, pois o modo mock foi removido do frontend.
+Abra http://localhost:3000. Com o seed do backend, use `admin@ciadavacina.com.br` / `admin123` ou `atendente@ciadavacina.com.br` / `agent123`.
 
 ## Documentação
 
-- [`docs/APPROVED-SCOPE.md`](./docs/APPROVED-SCOPE.md) — escopo aprovado e histórico de mudanças.
-- [`docs/PRODUCT-V2.md`](./docs/PRODUCT-V2.md) — visão de produto, personas e jornadas.
-- [`docs/BACKEND-CONTRACT.md`](./docs/BACKEND-CONTRACT.md) — contrato de API para o backend.
-- [`docs/FRONTEND-ARCHITECTURE.md`](./docs/FRONTEND-ARCHITECTURE.md) — arquitetura do frontend.
-- [`docs/openapi.yaml`](./docs/openapi.yaml) — especificação OpenAPI (Auth/Users/Units/Me).
-- [`docs/spec.md`](./docs/spec.md) — especificação técnica original.
+Índice em [`docs/README.md`](./docs/README.md).
+
+- [`docs/APPROVED-SCOPE.md`](./docs/APPROVED-SCOPE.md) — escopo aprovado
+- [`docs/PRODUCT-V2.md`](./docs/PRODUCT-V2.md) — produto e jornadas
+- [`docs/BACKEND-CONTRACT.md`](./docs/BACKEND-CONTRACT.md) — contrato de API
+- [`docs/FRONTEND-ARCHITECTURE.md`](./docs/FRONTEND-ARCHITECTURE.md) — arquitetura do frontend
+- [`docs/openapi.yaml`](./docs/openapi.yaml) — OpenAPI (Auth/Users/Units/Me)
+- [`docs/decisions.md`](./docs/decisions.md) — defaults operacionais
+- [`docs/marketing/`](./docs/marketing/) — deck, proposta e materiais comerciais

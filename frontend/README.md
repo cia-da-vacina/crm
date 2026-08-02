@@ -57,7 +57,9 @@ Detalhes em [`../docs/FRONTEND-ARCHITECTURE.md`](../docs/FRONTEND-ARCHITECTURE.m
 
 ## Documentação
 
-- [`docs/BACKEND-CONTRACT.md`](../docs/BACKEND-CONTRACT.md) — contrato de API que o backend implementa.
-- [`docs/PRODUCT-V2.md`](../docs/PRODUCT-V2.md) — visão de produto, personas e jornadas.
-- [`docs/FRONTEND-ARCHITECTURE.md`](../docs/FRONTEND-ARCHITECTURE.md) — arquitetura detalhada do frontend.
-- [`docs/APPROVED-SCOPE.md`](../docs/APPROVED-SCOPE.md) — escopo aprovado e histórico de mudanças.
+Índice em [`docs/README.md`](../docs/README.md).
+
+- [`docs/BACKEND-CONTRACT.md`](../docs/BACKEND-CONTRACT.md) — contrato de API
+- [`docs/PRODUCT-V2.md`](../docs/PRODUCT-V2.md) — produto e jornadas
+- [`docs/FRONTEND-ARCHITECTURE.md`](../docs/FRONTEND-ARCHITECTURE.md) — arquitetura do frontend
+- [`docs/APPROVED-SCOPE.md`](../docs/APPROVED-SCOPE.md) — escopo aprovado

@@ -1,7 +1,7 @@
 # CRM Cia da Vacina — Product Brief v2 (multicanal)
 
 **Revisão:** 2026-08-02
-**Substitui/estende:** `docs/spec.md` e `docs/APPROVED-SCOPE.md` (MVP WhatsApp-only, aprovado em 2026-07-14).
+**Substitui:** o MVP WhatsApp-only aprovado em 2026-07-14 (registrado em [`APPROVED-SCOPE.md`](./APPROVED-SCOPE.md)).
 **Equipe:** Felipe (Backend/Go) · Cristian (Frontend/Next.js)
 
 Este documento descreve a versão 2 do produto: o mesmo CRM de atendimento e pipeline comercial, agora multicanal (WhatsApp + Instagram + Facebook Messenger) e com o frontend rodando em produção real (sem mocks, com backend Go via BFF).

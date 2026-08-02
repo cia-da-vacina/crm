@@ -1,7 +1,7 @@
 # Decisões fechadas (dúvidas do plano)
 
-**Data:** 2026-07-14  
-**Regra:** onde o stakeholder ainda não respondeu, a decisão abaixo é a **default operacional** para desbloquear Sprint 1. Mudanças futuras atualizam este arquivo e o backlog.
+**Data:** 2026-07-14 · **Revisão:** 2026-08-02  
+**Regra:** onde o stakeholder ainda não respondeu, a decisão abaixo é a **default operacional**. Mudanças futuras atualizam este arquivo.
 
 | # | Dúvida | Decisão | Tipo |
 |---|--------|---------|------|
