@@ -8,22 +8,21 @@ O frontend fala com o backend via BFF (cookies httpOnly + proxy `/api/proxy/*`).
 
 https://github.com/cia-da-vacina/crm
 
-## Como rodar localmente
+## Status do backend
+
+A pasta [`backend/`](./backend/) está **sem implementação** de propósito — só um README apontando para o contrato. O Felipe implementa a API Go a partir de [`docs/BACKEND-CONTRACT.md`](./docs/BACKEND-CONTRACT.md) e [`docs/openapi.yaml`](./docs/openapi.yaml).
+
+## Como rodar o frontend
 
 ```bash
-# Terminal 1 — Backend
-cd backend
-go run ./cmd/api
-
-# Terminal 2 — Frontend
 cd frontend
 cp .env.example .env.local
-# API_URL=http://localhost:8080/api/v1
+# API_URL=http://localhost:8080/api/v1  (quando a API existir)
 npm install
 npm run dev
 ```
 
-Abra http://localhost:3000. Com o seed do backend, use `admin@ciadavacina.com.br` / `admin123` ou `atendente@ciadavacina.com.br` / `agent123`.
+Abra http://localhost:3000. Sem API no ar, login e dados não funcionam — normal até o backend estar pronto.
 
 ## Documentação
 

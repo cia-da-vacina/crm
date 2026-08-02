@@ -17,6 +17,8 @@
 | [`decisions.md`](./decisions.md) | Defaults operacionais (LLM, seeds, JWT, LGPD) |
 | [`adr/0001-simple-monolith.md`](./adr/0001-simple-monolith.md) | ADR: monólito Go + Next + Postgres |
 
+A implementação Go vive em [`../backend/`](../backend/) (hoje só README + contrato acima).
+
 ## Marketing / comercial
 
 Artefatos de deck, proposta e esboço contratual ficam em [`marketing/`](./marketing/) — não fazem parte da fonte da verdade de engenharia.
