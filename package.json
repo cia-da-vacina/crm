@@ -10,7 +10,10 @@
     "dev": "npm run dev -w frontend",
     "build": "npm run build -w @cia-da-vacina/styled-system && npm run build -w @cia-da-vacina/design-system-tokens && npm run build -w @cia-da-vacina/icon-system && npm run build -w @cia-da-vacina/design-system && npm run build -w frontend",
     "build:frontend": "npm run build -w frontend",
-    "start": "npm run start -w frontend"
+    "start": "npm run start -w frontend",
+    "docker:up": "docker compose --env-file .env.docker.example up --build -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f frontend"
   },
   "engines": {
     "node": ">=20"

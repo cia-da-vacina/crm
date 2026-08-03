@@ -6,8 +6,19 @@ Next.js 15 (App Router) + React 19 + TypeScript. O BFF fala com o backend via `A
 
 ## Como rodar
 
+### Docker (raiz do monorepo)
+
+```bash
+cp .env.docker.example .env.docker
+docker compose --env-file .env.docker up --build
+```
+
+Ver `frontend/Dockerfile` e `docker-compose.yml` na raiz. App em http://localhost:3000.
+
+### Local
+
 1. Quando a API Go existir, suba em `:8080` (ver [`backend/README.md`](../backend/README.md)).
-2. Configure o frontend:
+2. Configure o frontend (preferível na raiz do monorepo por causa dos workspaces):
 
 ```bash
 cp .env.example .env.local
@@ -52,7 +63,7 @@ Detalhes em [`../docs/FRONTEND-ARCHITECTURE.md`](../docs/FRONTEND-ARCHITECTURE.m
 | Script | Descrição |
 |---|---|
 | `npm run dev` | Sobe o servidor de desenvolvimento (`next dev -H 0.0.0.0`). |
-| `npm run build` | Build de produção. |
+| `npm run build` | Build de produção (`output: "standalone"` para Docker). |
 | `npm run start` | Sobe o build de produção (`next start -H 0.0.0.0`). |
 | `npm run lint` | ESLint (`next lint`). |
 | `npm run typecheck` | Checagem de tipos sem emitir (`tsc --noEmit`). |

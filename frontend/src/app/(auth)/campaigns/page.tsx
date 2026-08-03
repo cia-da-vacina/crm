@@ -198,7 +198,7 @@ const Chip = styled.button<{
   opacity: ${({ $faded }) => ($faded ? 0.55 : 1)};
   color: ${({ $fg }) => $fg};
   background: ${({ $bg }) => $bg};
-  outline: ${({ $active, $ring }) =>
+  outline: ${({ $active, $ring, $bg }) =>
     $active ? `2px solid ${$ring ?? $bg}` : "none"};
   outline-offset: 1px;
   transition: opacity 140ms ease, outline-color 140ms ease, filter 140ms ease;

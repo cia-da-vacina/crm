@@ -1,0 +1,84 @@
+# CRM Cia da Vacina — local / server stack
+#
+# Frontend is production-ready. Backend Go is not implemented yet (see backend/README.md);
+# the `backend` service is a placeholder profile so Felipe can plug the API in later.
+#
+# Usage:
+#   docker compose --env-file .env.docker.example up --build
+#   # ou copie para .env.docker e personalize:
+#   cp .env.docker.example .env.docker && docker compose --env-file .env.docker up --build
+#
+# App: http://localhost:3000
+
+name: cia-vacina-crm
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: cia-vacina-frontend:local
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      # BFF → API. When the Go API runs on the host: host.docker.internal.
+      # When the API is the compose `backend` service: http://backend:8080/api/v1
+      API_URL: ${API_URL:-http://host.docker.internal:8080/api/v1}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "-qO-",
+          "http://127.0.0.1:3000/login",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  # ─── Placeholder: enable with `docker compose --profile backend up` once Go API exists
+  # backend:
+  #   profiles: ["backend"]
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   image: cia-vacina-backend:local
+  #   ports:
+  #     - "${BACKEND_PORT:-8080}:8080"
+  #   environment:
+  #     ADDR: ":8080"
+  #     DATABASE_URL: postgres://crm:crm@postgres:5432/crm?sslmode=disable
+  #     JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   restart: unless-stopped
+  #
+  # postgres:
+  #   profiles: ["backend"]
+  #   image: postgres:16-alpine
+  #   environment:
+  #     POSTGRES_USER: crm
+  #     POSTGRES_PASSWORD: crm
+  #     POSTGRES_DB: crm
+  #   ports:
+  #     - "${POSTGRES_PORT:-5432}:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U crm -d crm"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 10
+  #   restart: unless-stopped
+
+# volumes:
+#   postgres_data:

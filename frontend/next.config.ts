@@ -28,6 +28,10 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
+  // Required for slim Docker images (copies only traced deps into .next/standalone).
+  output: "standalone",
+  // Trace files from the monorepo root so workspace packages resolve correctly.
+  outputFileTracingRoot: path.join(__dirname, ".."),
   compiler: {
     styledComponents: true,
   },

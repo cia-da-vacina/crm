@@ -12,8 +12,10 @@ packages/*/dist/
 # Env
 .env
 .env.local
+.env.docker
 !.env.example
 !**/.env.example
+!.env.docker.example
 
 # IDE / OS
 .DS_Store

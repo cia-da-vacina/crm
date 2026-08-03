@@ -1,0 +1,45 @@
+# Monorepo root — used by `docker compose` / `docker build -f frontend/Dockerfile`.
+
+# Git / IDE / OS
+.git
+.gitignore
+.gitattributes
+.idea
+.vscode
+**/.DS_Store
+**/Thumbs.db
+
+# Dependencies & build artifacts (reinstalled/rebuilt inside the image)
+node_modules
+**/node_modules
+frontend/.next
+frontend/out
+packages/*/dist
+backend/bin
+**/*.exe
+**/*.tsbuildinfo
+
+# Env with secrets (compose injects runtime env)
+.env
+.env.*
+!**/.env.example
+!**/.env.docker.example
+
+# Docs / marketing assets (not needed to run the app)
+docs
+*.md
+!frontend/README.md
+
+# Local / deploy leftovers
+frontend/.vercel
+**/.turbo
+**/coverage
+**/playwright-report
+
+# PWA generated at build time
+frontend/public/sw.js
+frontend/public/sw.js.map
+frontend/public/workbox-*.js
+frontend/public/workbox-*.js.map
+frontend/public/swe-worker-*.js
+frontend/public/swe-worker-*.js.map
