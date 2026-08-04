@@ -1,0 +1,29 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  entrypoint = ["./tmp/server"]
+  cmd = "go build -buildvcs=false -o ./tmp/server ./cmd/server"
+
+  include_dir = ["internal", "cmd", "pkg"]
+  include_ext = ["go", "yaml", "yml", "sql", "toml"]
+  exclude_regex = ["_test.go", "_gen.go"]
+
+  delay = 100
+  kill_delay = "2s"
+
+  log = "build-errors.log"
+
+  follow_symlink = false
+  send_interrupt = false
+  exclude_unchanged = false
+  stop_on_error = true
+
+[log]
+  time = true
+
+[misc]
+  clean_on_exit = true
+
+[screen]
+  clear_on_rebuild = true

@@ -1,0 +1,17 @@
+# Git
+.git
+.gitignore
+
+# Go
+bin/
+tmp/
+coverage.out
+coverage.html
+
+# Editor / IDE
+.vscode
+.idea
+*.swp
+
+# Env local (docker-compose injeta via env_file, imagem prod não deve embutir segredo)
+.env
