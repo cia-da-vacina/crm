@@ -188,7 +188,8 @@ func (r *Repository) ListMessages(ctx context.Context, conversationID string, be
 	var messages []entity.Message
 	err := r.db.SelectContext(ctx, &messages, `
 		SELECT id, conversation_id, direction, sender_type, sender_user_id, kind, channel,
-		       body, status, meta_message_id, media_url, media_mime_type, template_name, created_at
+		       body, status, meta_message_id, media_url, media_mime_type, template_name, created_at,
+		       pricing_category, pricing_billable, pricing_model, pricing_confirmed, cost_brl
 		FROM messages
 		WHERE conversation_id = $1 AND ($2::timestamptz IS NULL OR created_at < $2::timestamptz)
 		ORDER BY created_at DESC
@@ -208,9 +209,11 @@ func (r *Repository) ListMessages(ctx context.Context, conversationID string, be
 func (r *Repository) CreateMessage(ctx context.Context, msg entity.Message) error {
 	_, err := r.db.NamedExecContext(ctx, `
 		INSERT INTO messages (id, conversation_id, direction, sender_type, sender_user_id, kind,
-		                       channel, body, status, meta_message_id, created_at)
+		                       channel, body, status, meta_message_id, created_at,
+		                       pricing_category, pricing_billable, pricing_model, pricing_confirmed, cost_brl)
 		VALUES (:id, :conversation_id, :direction, :sender_type, :sender_user_id, :kind,
-		        :channel, :body, :status, :meta_message_id, :created_at)
+		        :channel, :body, :status, :meta_message_id, :created_at,
+		        :pricing_category, :pricing_billable, :pricing_model, :pricing_confirmed, :cost_brl)
 	`, msg)
 	return err
 }

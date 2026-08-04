@@ -9,6 +9,8 @@ import (
 	"github.com/cia-da-vacina/crm/backend/internal/domain/entity"
 	engagementrepo "github.com/cia-da-vacina/crm/backend/internal/module/engagement/repository"
 	engagementusecase "github.com/cia-da-vacina/crm/backend/internal/module/engagement/usecase"
+	pricingrepo "github.com/cia-da-vacina/crm/backend/internal/module/pricing/repository"
+	pricingusecase "github.com/cia-da-vacina/crm/backend/internal/module/pricing/usecase"
 	"github.com/cia-da-vacina/crm/backend/internal/module/webhook/repository"
 	"github.com/cia-da-vacina/crm/backend/internal/module/webhook/usecase"
 	"github.com/cia-da-vacina/crm/backend/internal/testutil"
@@ -36,7 +38,8 @@ func newUseCase(t *testing.T, db *database.DB, triage *noopTriage) *usecase.UseC
 	registry.Register(meta.NewMockClient(meta.ChannelInstagram))
 	registry.Register(meta.NewMockClient(meta.ChannelFacebook))
 	engagementUC := engagementusecase.New(engagementrepo.New(db), registry, nil)
-	return usecase.New(repo, triage, engagementUC, nil)
+	pricingUC := pricingusecase.New(pricingrepo.New(db))
+	return usecase.New(repo, triage, engagementUC, nil, pricingUC)
 }
 
 func whatsappTextPayload(phoneNumberID, waID, profileName, messageID, body string, ts time.Time) []byte {
@@ -371,7 +374,9 @@ func TestIngestPayload_Comment_DuplicateExternalID_Idempotent(t *testing.T) {
 	uc := newUseCase(t, db, &noopTriage{})
 
 	payload := commentPayload("author-"+unit.ID[:8], "comment-DUP", "media-1", "quanto custa a vacina?", time.Now())
-	t.Cleanup(func() { db.Exec(`DELETE FROM social_engagements WHERE channel = 'instagram' AND external_id = 'comment-DUP'`) })
+	t.Cleanup(func() {
+		db.Exec(`DELETE FROM social_engagements WHERE channel = 'instagram' AND external_id = 'comment-DUP'`)
+	})
 
 	if err := uc.IngestPayload(context.Background(), entity.ChannelInstagram, payload); err != nil {
 		t.Fatalf("first ingest: %v", err)
@@ -386,6 +391,89 @@ func TestIngestPayload_Comment_DuplicateExternalID_Idempotent(t *testing.T) {
 	}
 	if count != 1 {
 		t.Fatalf("expected exactly 1 engagement despite the webhook being replayed, got %d", count)
+	}
+}
+
+func whatsappStatusPayload(metaMessageID, status, category string, ts time.Time) []byte {
+	return []byte(fmt.Sprintf(`{
+		"entry": [{"changes": [{"value": {
+			"statuses": [{
+				"id": %q, "status": %q, "timestamp": %q,
+				"pricing": {"billable": true, "pricing_model": "CBP", "category": %q}
+			}]
+		}}]}]
+	}`, metaMessageID, status, fmt.Sprintf("%d", ts.Unix()), category))
+}
+
+// TestIngestPayload_WhatsApp_StatusWithPricing_ReconcilesMessageCost covers
+// Frente A of the WhatsApp 2026 adaptation plan: once a real Meta status
+// webhook exists, it should overwrite the LOCAL estimate (see
+// conversation/usecase.applyEstimatedPricing) with what the Meta actually
+// confirmed, and flip pricing_confirmed to true.
+func TestIngestPayload_WhatsApp_StatusWithPricing_ReconcilesMessageCost(t *testing.T) {
+	db := testutil.DB(t)
+	testutil.SnapshotAppSettings(t, db)
+	unit := testutil.NewUnit(t, db)
+	cfg := testutil.NewMetaChannelConfig(t, db, entity.ChannelWhatsApp, &unit.ID, strPtr("phone-"+unit.ID))
+	uc := newUseCase(t, db, &noopTriage{})
+
+	waID := "55519" + unit.ID[:8]
+	t.Cleanup(func() { cleanupByExternalID(db, entity.ChannelWhatsApp, waID) })
+
+	// Uma mensagem inbound primeiro, só pra existir uma linha em messages —
+	// o evento de status abaixo referencia um meta_message_id de uma
+	// mensagem OUTBOUND fictícia (o backend não teria como ter mandado essa
+	// mensagem via mock e recebido um status real dela no mesmo teste, já
+	// que não existe client real — ver ARCHITECTURE.md §5), então o teste
+	// insere a mensagem outbound direto, simulando o que SendMessage teria
+	// criado.
+	inbound := whatsappTextPayload(*cfg.PhoneNumberID, waID, "Fulano", "wamid.INBOUND1", "oi", time.Now())
+	if err := uc.IngestPayload(context.Background(), entity.ChannelWhatsApp, inbound); err != nil {
+		t.Fatalf("inbound ingest: %v", err)
+	}
+	var conversationID string
+	if err := db.Get(&conversationID, `SELECT conversation_id FROM messages WHERE meta_message_id = 'wamid.INBOUND1'`); err != nil {
+		t.Fatalf("find conversation: %v", err)
+	}
+	outboundID := "wamid.OUTBOUND1"
+	if _, err := db.Exec(`
+		INSERT INTO messages (id, conversation_id, direction, sender_type, kind, channel, body, status, meta_message_id, created_at,
+		                       pricing_category, pricing_confirmed, cost_brl)
+		VALUES (gen_random_uuid(), $1, 'out', 'agent', 'text', 'whatsapp', 'confirmado!', 'sent', $2, now(),
+		        'service', false, 0.0350)
+	`, conversationID, outboundID); err != nil {
+		t.Fatalf("seed outbound message: %v", err)
+	}
+
+	statusPayload := whatsappStatusPayload(outboundID, "delivered", "utility", time.Now())
+	if err := uc.IngestPayload(context.Background(), entity.ChannelWhatsApp, statusPayload); err != nil {
+		t.Fatalf("status ingest: %v", err)
+	}
+
+	var expectedRate float64
+	if err := db.Get(&expectedRate, `SELECT rate_brl FROM message_pricing_rates WHERE category = 'utility'`); err != nil {
+		t.Fatalf("read seeded utility rate: %v", err)
+	}
+
+	var status, category string
+	var confirmed bool
+	var costBRL float64
+	if err := db.QueryRow(`
+		SELECT status, pricing_category, pricing_confirmed, cost_brl FROM messages WHERE meta_message_id = $1
+	`, outboundID).Scan(&status, &category, &confirmed, &costBRL); err != nil {
+		t.Fatalf("read reconciled message: %v", err)
+	}
+	if status != "delivered" {
+		t.Fatalf("expected status=delivered, got %q", status)
+	}
+	if category != "utility" {
+		t.Fatalf("expected pricing_category reconciled to utility (the Meta-reported category), got %q", category)
+	}
+	if !confirmed {
+		t.Fatal("expected pricing_confirmed=true after reconciling with a status webhook that carries a pricing object")
+	}
+	if costBRL != expectedRate {
+		t.Fatalf("expected cost_brl recomputed to the utility rate (%v), got %v", expectedRate, costBRL)
 	}
 }
 

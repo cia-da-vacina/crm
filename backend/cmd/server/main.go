@@ -21,6 +21,8 @@ import (
 	"github.com/cia-da-vacina/crm/backend/internal/module/me"
 	"github.com/cia-da-vacina/crm/backend/internal/module/metasettings"
 	"github.com/cia-da-vacina/crm/backend/internal/module/pop"
+	"github.com/cia-da-vacina/crm/backend/internal/module/pricing"
+	"github.com/cia-da-vacina/crm/backend/internal/module/template"
 	"github.com/cia-da-vacina/crm/backend/internal/module/triage"
 	"github.com/cia-da-vacina/crm/backend/internal/module/unit"
 	"github.com/cia-da-vacina/crm/backend/internal/module/user"
@@ -112,5 +114,7 @@ func registerRoutes(r *httppkg.Router, a *app.App) {
 		triage.New(a).Register(r)
 		engagement.New(a).Register(r)
 		auditlog.New(a).Register(r)
+		pricing.New(a).Register(r)
+		template.New(a).Register(r)
 	})
 }

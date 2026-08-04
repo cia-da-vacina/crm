@@ -43,20 +43,28 @@ type ConversationDetail struct {
 }
 
 type Message struct {
-	ID                  string    `json:"id"`
-	ConversationID      string    `json:"conversation_id"`
-	Direction           string    `json:"direction"`
-	SenderType          string    `json:"sender_type"`
-	Kind                string    `json:"kind"`
-	Channel             string    `json:"channel"`
-	Body                string    `json:"body"`
-	Status              string    `json:"status"`
-	MetaMessageID       *string   `json:"meta_message_id,omitempty"`
-	ReplyToEngagementID *string   `json:"reply_to_engagement_id,omitempty"`
-	MediaURL            *string   `json:"media_url,omitempty"`
-	MediaMimeType       *string   `json:"media_mime_type,omitempty"`
-	TemplateName        *string   `json:"template_name,omitempty"`
-	CreatedAt           time.Time `json:"created_at"`
+	ID                  string  `json:"id"`
+	ConversationID      string  `json:"conversation_id"`
+	Direction           string  `json:"direction"`
+	SenderType          string  `json:"sender_type"`
+	Kind                string  `json:"kind"`
+	Channel             string  `json:"channel"`
+	Body                string  `json:"body"`
+	Status              string  `json:"status"`
+	MetaMessageID       *string `json:"meta_message_id,omitempty"`
+	ReplyToEngagementID *string `json:"reply_to_engagement_id,omitempty"`
+	MediaURL            *string `json:"media_url,omitempty"`
+	MediaMimeType       *string `json:"media_mime_type,omitempty"`
+	TemplateName        *string `json:"template_name,omitempty"`
+	// Bloco de custo (docs/WHATSAPP-2026-ADAPTATION-PLAN.md, Frente A) — só
+	// preenchido em mensagens de saída; PricingConfirmed=false indica
+	// estimativa local (sem client Meta real pra reconciliar via webhook de
+	// status ainda, ver backend/ARCHITECTURE.md §5).
+	PricingCategory  *string   `json:"pricing_category,omitempty"`
+	PricingBillable  *bool     `json:"pricing_billable,omitempty"`
+	PricingConfirmed bool      `json:"pricing_confirmed"`
+	CostBRL          *float64  `json:"cost_brl,omitempty"`
+	CreatedAt        time.Time `json:"created_at"`
 }
 
 type CursorPage[T any] struct {

@@ -7,6 +7,7 @@ package webhook
 import (
 	"github.com/cia-da-vacina/crm/backend/internal/app"
 	"github.com/cia-da-vacina/crm/backend/internal/module/engagement"
+	"github.com/cia-da-vacina/crm/backend/internal/module/pricing"
 	"github.com/cia-da-vacina/crm/backend/internal/module/triage"
 	"github.com/cia-da-vacina/crm/backend/internal/module/webhook/handler"
 	"github.com/cia-da-vacina/crm/backend/internal/module/webhook/repository"
@@ -26,7 +27,8 @@ func New(a *app.App) *Module {
 	// CustomerReader em conversation/module.go).
 	triageUC := triage.NewUseCase(a)
 	engagementUC := engagement.NewUseCase(a)
-	uc := usecase.New(repo, triageUC, engagementUC, a.SSE)
+	pricingUC := pricing.NewUseCase(a)
+	uc := usecase.New(repo, triageUC, engagementUC, a.SSE, pricingUC)
 	h := handler.New(uc)
 	return &Module{handler: h}
 }

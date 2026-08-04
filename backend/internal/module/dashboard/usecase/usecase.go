@@ -22,6 +22,8 @@ type Repository interface {
 	GetUnitBreakdown(ctx context.Context, unitIDs []string) ([]repository.UnitRow, error)
 	GetAwaitingFollowupByUnit(ctx context.Context, unitIDs []string) (map[string]int, error)
 	ListAllUnitIDs(ctx context.Context) ([]string, error)
+	GetCostTotals(ctx context.Context, unscoped bool, unitIDs []string) (repository.CostTotals, error)
+	GetCostByCategory(ctx context.Context, unscoped bool, unitIDs []string) ([]repository.CostByCategoryRow, error)
 }
 
 type Access struct {
@@ -154,6 +156,43 @@ func (uc *UseCase) Get(ctx context.Context, unitIDParam string, access Access) (
 		ClosedByChannel:    closedByChannel,
 		NotClosedByChannel: notClosedByChannel,
 		Units:              units,
+	}, nil
+}
+
+// GetCosts é o dashboard de custo (Frente A do plano de adaptação WhatsApp
+// 2026) — mesma resolução de escopo por unit_id?/role de Get, endpoint
+// próprio (GET /dashboard/costs) porque GET /dashboard/summary é documentado
+// como "sem receita/ticket/período" (docs/BACKEND-CONTRACT.md §6).
+func (uc *UseCase) GetCosts(ctx context.Context, unitIDParam string, access Access) (model.CostSummary, error) {
+	unscoped, unitIDs, err := uc.resolveScope(unitIDParam, access)
+	if err != nil {
+		return model.CostSummary{}, err
+	}
+
+	totals, err := uc.repo.GetCostTotals(ctx, unscoped, unitIDs)
+	if err != nil {
+		return model.CostSummary{}, apperrors.NewDatabaseError(err)
+	}
+	byCategory, err := uc.repo.GetCostByCategory(ctx, unscoped, unitIDs)
+	if err != nil {
+		return model.CostSummary{}, apperrors.NewDatabaseError(err)
+	}
+
+	items := make([]model.CostCategoryItem, len(byCategory))
+	for i, row := range byCategory {
+		items[i] = model.CostCategoryItem{
+			Category:     row.Category,
+			MessageCount: row.MessageCount,
+			CostBRL:      row.CostBRL,
+		}
+	}
+
+	return model.CostSummary{
+		TotalCostBRL:      totals.TotalCostBRL,
+		TotalOutMessages:  totals.TotalOutMessages,
+		PricedMessages:    totals.PricedMessages,
+		ConfirmedMessages: totals.ConfirmedMessages,
+		ByCategory:        items,
 	}, nil
 }
 

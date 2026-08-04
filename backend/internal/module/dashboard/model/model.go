@@ -38,3 +38,23 @@ type UnitSummary struct {
 	Unclaimed        int     `json:"unclaimed"`
 	AwaitingFollowup int     `json:"awaiting_followup"`
 }
+
+// CostSummary é o dashboard de custo do plano de adaptação WhatsApp 2026
+// (Frente A) — GET /dashboard/costs, endpoint novo (não estende
+// GET /dashboard/summary, que docs/BACKEND-CONTRACT.md §6 documenta
+// explicitamente como "sem receita/ticket/período"). PricedMessages/
+// ConfirmedMessages ajudam a UI a distinguir estimativa de valor
+// reconciliado com a Meta — ver Message.PricingConfirmed.
+type CostSummary struct {
+	TotalCostBRL      float64            `json:"total_cost_brl"`
+	TotalOutMessages  int                `json:"total_out_messages"`
+	PricedMessages    int                `json:"priced_messages"`
+	ConfirmedMessages int                `json:"confirmed_messages"`
+	ByCategory        []CostCategoryItem `json:"by_category"`
+}
+
+type CostCategoryItem struct {
+	Category     string  `json:"category"`
+	MessageCount int     `json:"message_count"`
+	CostBRL      float64 `json:"cost_brl"`
+}

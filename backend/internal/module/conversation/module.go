@@ -8,6 +8,7 @@ import (
 	customerrepository "github.com/cia-da-vacina/crm/backend/internal/module/customer/repository"
 	customerusecase "github.com/cia-da-vacina/crm/backend/internal/module/customer/usecase"
 	"github.com/cia-da-vacina/crm/backend/internal/module/middleware"
+	"github.com/cia-da-vacina/crm/backend/internal/module/pricing"
 	httppkg "github.com/cia-da-vacina/crm/backend/pkg/http"
 )
 
@@ -26,7 +27,13 @@ func New(a *app.App) *Module {
 	// mantém os módulos desacoplados.
 	customerReader := customerusecase.New(customerrepository.New(a.DB))
 
-	uc := usecase.New(repo, customerReader, a.SSE, a.Meta, a.Audit)
+	// PricingReader próprio (não o módulo pricing inteiro) — só pra estimar
+	// Message.CostBRL no envio (Frente A do plano de adaptação WhatsApp
+	// 2026). Mesma convenção de instância independente de customerReader
+	// acima.
+	pricingReader := pricing.NewUseCase(a)
+
+	uc := usecase.New(repo, customerReader, a.SSE, a.Meta, a.Audit, pricingReader)
 	h := handler.New(uc, a.SSE)
 	return &Module{handler: h, mw: middleware.New(a.JWT)}
 }

@@ -138,3 +138,35 @@ func (r *Repository) CreateMessage(ctx context.Context, msg entity.Message) (boo
 	}
 	return true, nil
 }
+
+// UpdateMessagePricing reconcilia status/custo a partir de um evento
+// "statuses" de webhook (Frente A do plano de adaptação WhatsApp 2026) —
+// identifica a mensagem por meta_message_id (não por id do CRM, que o
+// webhook não conhece). Retorna found=false (sem erro) quando nenhuma
+// mensagem com esse meta_message_id existe ainda — pode acontecer se o
+// status chegar antes da própria mensagem ter sido persistida, ou se for de
+// uma mensagem enviada por um canal/cliente que este backend não originou.
+func (r *Repository) UpdateMessagePricing(ctx context.Context, metaMessageID string, status entity.MessageStatus, category *entity.PricingCategory, billable *bool, pricingModel *string, costBRL *float64) (bool, error) {
+	// pricing_confirmed só vira true quando category veio preenchido — um
+	// evento "sent"/"delivered" sem objeto pricing só atualiza status, não
+	// deve fingir ter confirmado um custo que a Meta não reportou.
+	confirmed := category != nil
+	result, err := r.db.ExecContext(ctx, `
+		UPDATE messages
+		SET status = $1,
+		    pricing_category = COALESCE($2, pricing_category),
+		    pricing_billable = COALESCE($3, pricing_billable),
+		    pricing_model = COALESCE($4, pricing_model),
+		    pricing_confirmed = pricing_confirmed OR $5,
+		    cost_brl = COALESCE($6, cost_brl)
+		WHERE meta_message_id = $7
+	`, status, category, billable, pricingModel, confirmed, costBRL, metaMessageID)
+	if err != nil {
+		return false, err
+	}
+	n, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+	return n > 0, nil
+}

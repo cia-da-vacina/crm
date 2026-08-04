@@ -55,6 +55,15 @@ type CustomerReader interface {
 	Get(ctx context.Context, id string) (customermodel.Customer, error)
 }
 
+// PricingReader é o subconjunto do usecase de pricing que SendMessage
+// precisa pra estimar Message.CostBRL no momento do envio (Frente A do plano
+// de adaptação WhatsApp 2026) — mesma convenção de CustomerReader acima.
+// Quando nil (ex.: testes que não passam pricing), SendMessage simplesmente
+// não preenche o bloco de custo, sem quebrar o envio.
+type PricingReader interface {
+	GetRate(ctx context.Context, category entity.PricingCategory) (entity.MessagePricingRate, error)
+}
+
 // Access carrega quem está fazendo a chamada — extraído dos claims JWT pelo
 // handler, nunca do corpo da request.
 type Access struct {
@@ -87,10 +96,11 @@ type UseCase struct {
 	sseHub   *sse.Hub
 	meta     *meta.Registry
 	audit    *audit.Logger
+	pricing  PricingReader
 }
 
-func New(repo Repository, customerReader CustomerReader, sseHub *sse.Hub, metaRegistry *meta.Registry, auditLogger *audit.Logger) *UseCase {
-	return &UseCase{repo: repo, customer: customerReader, sseHub: sseHub, meta: metaRegistry, audit: auditLogger}
+func New(repo Repository, customerReader CustomerReader, sseHub *sse.Hub, metaRegistry *meta.Registry, auditLogger *audit.Logger, pricingReader PricingReader) *UseCase {
+	return &UseCase{repo: repo, customer: customerReader, sseHub: sseHub, meta: metaRegistry, audit: auditLogger, pricing: pricingReader}
 }
 
 func (uc *UseCase) List(ctx context.Context, f model.InboxFilter) (model.CursorPage[model.ConversationSummary], error) {
@@ -258,6 +268,13 @@ func (uc *UseCase) SendMessage(ctx context.Context, conversationID string, req m
 		MetaMessageID:  &result.MetaMessageID,
 		CreatedAt:      now,
 	}
+	// Texto livre 1:1 é sempre categoria "service" (guia WhatsApp 2026 —
+	// nenhuma exceção de janela grátis se aplica aqui, já que CTWA/72h ainda
+	// não é rastreado — ver docs/WHATSAPP-2026-ADAPTATION-PLAN.md Frente E).
+	// pricing_confirmed fica false: é uma estimativa local no momento do
+	// envio, não o que a Meta de fato cobrou (só confirmável via webhook de
+	// status real, que ainda não existe client pra receber — Frente A nota).
+	uc.applyEstimatedPricing(ctx, &msg, entity.PricingService)
 	if err := uc.repo.CreateMessage(ctx, msg); err != nil {
 		return model.Message{}, apperrors.NewDatabaseError(err)
 	}
@@ -467,25 +484,56 @@ func toSummary(row repository.Row, pv *entity.PhoneVerification, now time.Time) 
 }
 
 func toMessageModel(m entity.Message) model.Message {
-	return model.Message{
-		ID:             m.ID,
-		ConversationID: m.ConversationID,
-		Direction:      string(m.Direction),
-		SenderType:     string(m.SenderType),
-		Kind:           string(m.Kind),
-		Channel:        string(m.Channel),
-		Body:           m.Body,
-		Status:         string(m.Status),
-		MetaMessageID:  m.MetaMessageID,
-		MediaURL:       m.MediaURL,
-		MediaMimeType:  m.MediaMimeType,
-		TemplateName:   m.TemplateName,
-		CreatedAt:      m.CreatedAt,
+	msg := model.Message{
+		ID:               m.ID,
+		ConversationID:   m.ConversationID,
+		Direction:        string(m.Direction),
+		SenderType:       string(m.SenderType),
+		Kind:             string(m.Kind),
+		Channel:          string(m.Channel),
+		Body:             m.Body,
+		Status:           string(m.Status),
+		MetaMessageID:    m.MetaMessageID,
+		MediaURL:         m.MediaURL,
+		MediaMimeType:    m.MediaMimeType,
+		TemplateName:     m.TemplateName,
+		PricingConfirmed: m.PricingConfirmed,
+		CostBRL:          m.CostBRL,
+		PricingBillable:  m.PricingBillable,
+		CreatedAt:        m.CreatedAt,
 	}
+	if m.PricingCategory != nil {
+		cat := string(*m.PricingCategory)
+		msg.PricingCategory = &cat
+	}
+	return msg
 }
 
 func toMetaChannel(c entity.Channel) meta.ChannelType {
 	return meta.ChannelType(c)
+}
+
+// applyEstimatedPricing preenche o bloco de custo de uma mensagem de saída a
+// partir do rate card local (pkg pricing) — best-effort: se uc.pricing for
+// nil (não injetado, ex.: algum teste que não precisa de custo) ou a
+// categoria não estiver cadastrada, a mensagem é enviada e persistida do
+// mesmo jeito, só sem PricingCategory/CostBRL preenchidos. Custo é sempre
+// uma leitura auxiliar, nunca deve bloquear o envio de uma mensagem real.
+func (uc *UseCase) applyEstimatedPricing(ctx context.Context, msg *entity.Message, category entity.PricingCategory) {
+	if uc.pricing == nil {
+		return
+	}
+	rate, err := uc.pricing.GetRate(ctx, category)
+	if err != nil {
+		return
+	}
+	cat := category
+	billable := rate.Billable
+	cost := rate.RateBRL
+	msg.PricingCategory = &cat
+	msg.PricingBillable = &billable
+	msg.CostBRL = &cost
+	msg.PricingConfirmed = false
 }
 
 func preview(body string) string {

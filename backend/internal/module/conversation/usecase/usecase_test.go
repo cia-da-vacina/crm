@@ -11,6 +11,8 @@ import (
 	"github.com/cia-da-vacina/crm/backend/internal/module/conversation/model"
 	"github.com/cia-da-vacina/crm/backend/internal/module/conversation/repository"
 	"github.com/cia-da-vacina/crm/backend/internal/module/conversation/usecase"
+	pricingrepo "github.com/cia-da-vacina/crm/backend/internal/module/pricing/repository"
+	pricingusecase "github.com/cia-da-vacina/crm/backend/internal/module/pricing/usecase"
 	"github.com/cia-da-vacina/crm/backend/internal/testutil"
 	"github.com/cia-da-vacina/crm/backend/pkg/apperrors"
 	"github.com/cia-da-vacina/crm/backend/pkg/audit"
@@ -25,7 +27,8 @@ func newUseCase(t *testing.T, db *database.DB) *usecase.UseCase {
 	registry.Register(meta.NewMockClient(meta.ChannelWhatsApp))
 	registry.Register(meta.NewMockClient(meta.ChannelInstagram))
 	registry.Register(meta.NewMockClient(meta.ChannelFacebook))
-	return usecase.New(repo, customerReader, nil, registry, audit.New(db))
+	pricingReader := pricingusecase.New(pricingrepo.New(db))
+	return usecase.New(repo, customerReader, nil, registry, audit.New(db), pricingReader)
 }
 
 func respStatus(t *testing.T, err error) int {
@@ -383,5 +386,44 @@ func TestSendMessage_HumanMode_Succeeds(t *testing.T) {
 	}
 	if msg.Direction != string(entity.DirectionOut) || msg.SenderType != string(entity.SenderAgent) {
 		t.Fatalf("unexpected message shape: %+v", msg)
+	}
+}
+
+// TestSendMessage_EstimatesServiceCostFromRateCard covers Frente A of the
+// WhatsApp 2026 adaptation plan: free-form text sent by an agent/AI is
+// always the "service" pricing category (guide's Regra 1 — no more free
+// in-window replies from Oct/2026), and its cost is looked up from
+// message_pricing_rates (migration 000021 seeds it, not hardcoded here) —
+// not confirmed yet (pricing_confirmed=false) since no real Meta status
+// webhook exists to reconcile it against.
+func TestSendMessage_EstimatesServiceCostFromRateCard(t *testing.T) {
+	db := testutil.DB(t)
+	uc := newUseCase(t, db)
+	unit := testutil.NewUnit(t, db)
+	agent := testutil.NewUser(t, db, entity.RoleAgent, unit.ID)
+	customer := testutil.NewCustomer(t, db, &unit.ID, entity.IdentificationAnonymous, nil)
+	conv := testutil.NewConversation(t, db, customer.ID, unit.ID, testutil.ConversationOpts{Mode: entity.ModeHuman})
+	testutil.NewCustomerIdentity(t, db, customer.ID, entity.ChannelWhatsApp, "", nil, false)
+	t.Cleanup(func() { db.Exec(`DELETE FROM messages WHERE conversation_id = $1`, conv.ID) })
+
+	var expectedRate float64
+	if err := db.Get(&expectedRate, `SELECT rate_brl FROM message_pricing_rates WHERE category = 'service'`); err != nil {
+		t.Fatalf("read seeded service rate: %v", err)
+	}
+
+	access := usecase.Access{UserID: agent.ID, Role: string(entity.RoleAgent), UnitIDs: []string{unit.ID}}
+	msg, err := uc.SendMessage(context.Background(), conv.ID, model.SendMessageRequest{Body: "seu exame está pronto"}, access)
+	if err != nil {
+		t.Fatalf("expected send to succeed, got: %v", err)
+	}
+
+	if msg.PricingCategory == nil || *msg.PricingCategory != string(entity.PricingService) {
+		t.Fatalf("expected pricing_category=service, got %v", msg.PricingCategory)
+	}
+	if msg.CostBRL == nil || *msg.CostBRL != expectedRate {
+		t.Fatalf("expected cost_brl=%v (from rate card), got %v", expectedRate, msg.CostBRL)
+	}
+	if msg.PricingConfirmed {
+		t.Fatal("expected pricing_confirmed=false for a locally-estimated cost (no real Meta status webhook yet)")
 	}
 }

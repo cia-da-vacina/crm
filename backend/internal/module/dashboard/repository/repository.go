@@ -199,6 +199,53 @@ func (r *Repository) ListAllUnitIDs(ctx context.Context) ([]string, error) {
 	return ids, err
 }
 
+// CostTotals é o agregado geral do dashboard de custo (Frente A do plano de
+// adaptação WhatsApp 2026) — só mensagens de saída (direction='out') contam,
+// já que a Meta nunca cobra mensagem recebida.
+type CostTotals struct {
+	TotalCostBRL      float64 `db:"total_cost_brl"`
+	PricedMessages    int     `db:"priced_messages"`
+	ConfirmedMessages int     `db:"confirmed_messages"`
+	TotalOutMessages  int     `db:"total_out_messages"`
+}
+
+func (r *Repository) GetCostTotals(ctx context.Context, unscoped bool, unitIDs []string) (CostTotals, error) {
+	var t CostTotals
+	err := r.db.GetContext(ctx, &t, `
+		SELECT
+			COALESCE(SUM(m.cost_brl), 0) AS total_cost_brl,
+			COUNT(*) FILTER (WHERE m.cost_brl IS NOT NULL) AS priced_messages,
+			COUNT(*) FILTER (WHERE m.pricing_confirmed) AS confirmed_messages,
+			COUNT(*) AS total_out_messages
+		FROM messages m
+		JOIN conversations c ON c.id = m.conversation_id
+		WHERE m.direction = 'out' AND ($1 OR c.unit_id = ANY($2))
+	`, unscoped, unitIDsOrEmpty(unitIDs))
+	return t, err
+}
+
+// CostByCategoryRow é uma linha do breakdown por categoria de cobrança —
+// alimenta o "BREAKDOWN POR TIPO" do dashboard descrito em
+// WhatsApp_API_Optimization_Guide.md §10.
+type CostByCategoryRow struct {
+	Category     string  `db:"category"`
+	MessageCount int     `db:"message_count"`
+	CostBRL      float64 `db:"cost_brl"`
+}
+
+func (r *Repository) GetCostByCategory(ctx context.Context, unscoped bool, unitIDs []string) ([]CostByCategoryRow, error) {
+	var rows []CostByCategoryRow
+	err := r.db.SelectContext(ctx, &rows, `
+		SELECT m.pricing_category AS category, COUNT(*) AS message_count, COALESCE(SUM(m.cost_brl), 0) AS cost_brl
+		FROM messages m
+		JOIN conversations c ON c.id = m.conversation_id
+		WHERE m.direction = 'out' AND m.pricing_category IS NOT NULL AND ($1 OR c.unit_id = ANY($2))
+		GROUP BY m.pricing_category
+		ORDER BY cost_brl DESC
+	`, unscoped, unitIDsOrEmpty(unitIDs))
+	return rows, err
+}
+
 // unitIDsOrEmpty evita passar nil pro driver — ANY(NULL) no Postgres não dá
 // erro, mas é mais claro/seguro sempre mandar um slice concreto.
 func unitIDsOrEmpty(ids []string) []string {

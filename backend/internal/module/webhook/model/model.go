@@ -19,6 +19,21 @@ type InboundMessage struct {
 	PhoneNumberID string // só preenchido pro WhatsApp — usado pra achar a unidade dona
 }
 
+// InboundStatus é a forma unificada de um evento do array "statuses" do
+// webhook de status da WhatsApp Cloud API — só existe pro WhatsApp (Frente A
+// do plano de adaptação WhatsApp 2026: a mudança de cobrança de out/2026 é
+// específica desse canal). Category/Billable/PricingModel vêm nil quando o
+// evento de status não tem objeto "pricing" (ex.: um "sent"/"delivered" que
+// ainda não chegou em "read", ou quando a mensagem não é billable).
+type InboundStatus struct {
+	MetaMessageID string
+	Status        string // sent | delivered | read | failed
+	Category      *string
+	Billable      *bool
+	PricingModel  *string
+	Timestamp     time.Time
+}
+
 // InboundEngagement é a forma unificada que os parsers de comentário/story
 // produzem, análoga a InboundMessage — só existe pra Instagram/Facebook
 // (WhatsApp não tem posts, stories nem comments). UnitID é preenchido depois

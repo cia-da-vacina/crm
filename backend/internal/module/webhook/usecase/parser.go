@@ -33,6 +33,22 @@ type whatsappPayload struct {
 						Body string `json:"body"`
 					} `json:"text"`
 				} `json:"messages"`
+				// Statuses é o array de status de entrega/leitura/cobrança
+				// (docs oficiais: "status messages webhook reference") — shape
+				// inferido da documentação pública, nunca visto de um app real
+				// neste ambiente (mesma ressalva de backend/ARCHITECTURE.md §8
+				// pros webhooks de engagement). pricing_confirmed só vira true
+				// no dia em que isso for validado contra tráfego real.
+				Statuses []struct {
+					ID        string `json:"id"`
+					Status    string `json:"status"`
+					Timestamp string `json:"timestamp"`
+					Pricing   struct {
+						Billable     bool   `json:"billable"`
+						PricingModel string `json:"pricing_model"`
+						Category     string `json:"category"`
+					} `json:"pricing"`
+				} `json:"statuses"`
 			} `json:"value"`
 		} `json:"changes"`
 	} `json:"entry"`
@@ -69,6 +85,42 @@ func parseWhatsApp(raw []byte) ([]model.InboundMessage, error) {
 					Timestamp:     ts,
 					PhoneNumberID: change.Value.Metadata.PhoneNumberID,
 				})
+			}
+		}
+	}
+	return out, nil
+}
+
+// parseWhatsAppStatuses extrai o array "statuses" (Frente A do plano de
+// adaptação WhatsApp 2026 — núcleo de custo) — eventos sem objeto "pricing"
+// preenchido (billable=false e category="") ainda geram um InboundStatus
+// pra atualizar o Status da mensagem (sent/delivered/read/failed), só sem
+// Category/Billable/PricingModel setados.
+func parseWhatsAppStatuses(raw []byte) ([]model.InboundStatus, error) {
+	var payload whatsappPayload
+	if err := json.Unmarshal(raw, &payload); err != nil {
+		return nil, err
+	}
+
+	var out []model.InboundStatus
+	for _, entryItem := range payload.Entry {
+		for _, change := range entryItem.Changes {
+			for _, s := range change.Value.Statuses {
+				ts, _ := parseUnixSeconds(s.Timestamp)
+				status := model.InboundStatus{
+					MetaMessageID: s.ID,
+					Status:        s.Status,
+					Timestamp:     ts,
+				}
+				if s.Pricing.Category != "" {
+					category := s.Pricing.Category
+					billable := s.Pricing.Billable
+					pricingModel := s.Pricing.PricingModel
+					status.Category = &category
+					status.Billable = &billable
+					status.PricingModel = &pricingModel
+				}
+				out = append(out, status)
 			}
 		}
 	}

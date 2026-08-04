@@ -251,6 +251,36 @@ const (
 	MessageStatusFailed    MessageStatus = "failed"
 )
 
+// PricingCategory espelha os valores que o webhook de status da WhatsApp
+// Cloud API reporta em pricing.category (docs/WHATSAPP-2026-ADAPTATION-PLAN.md
+// §2.2) — nunca calculado por regra própria, sempre o que a Meta confirma
+// (ou, antes de existir client real, a melhor estimativa local a partir do
+// kind/template da mensagem — ver Message.PricingConfirmed).
+type PricingCategory string
+
+const (
+	PricingMarketing                 PricingCategory = "marketing"
+	PricingUtility                   PricingCategory = "utility"
+	PricingAuthentication            PricingCategory = "authentication"
+	PricingAuthenticationInternation PricingCategory = "authentication_international"
+	PricingService                   PricingCategory = "service"
+	PricingFreeEntryPoint            PricingCategory = "free_entry_point"
+	PricingFreeCustomerService       PricingCategory = "free_customer_service"
+)
+
+// ValidPricingCategories espelha o CHECK de message_pricing_rates/messages —
+// mesma convenção de ValidPipelineStages (validação de pertinência ao enum
+// feita em Go antes de bater no banco, pra devolver 400 em vez de 500).
+var ValidPricingCategories = map[PricingCategory]bool{
+	PricingMarketing:                 true,
+	PricingUtility:                   true,
+	PricingAuthentication:            true,
+	PricingAuthenticationInternation: true,
+	PricingService:                   true,
+	PricingFreeEntryPoint:            true,
+	PricingFreeCustomerService:       true,
+}
+
 type Message struct {
 	ID             string           `db:"id"                json:"id"`
 	ConversationID string           `db:"conversation_id"   json:"conversation_id"`
@@ -267,8 +297,62 @@ type Message struct {
 	TemplateName   *string          `db:"template_name"     json:"template_name,omitempty"`
 	// ReplyToEngagementID liga a mensagem a um SocialEngagement de origem —
 	// ex.: resposta enviada a partir de uma resposta de story (fase 8).
-	ReplyToEngagementID *string   `db:"reply_to_engagement_id" json:"reply_to_engagement_id,omitempty"`
-	CreatedAt           time.Time `db:"created_at"             json:"created_at"`
+	ReplyToEngagementID *string `db:"reply_to_engagement_id" json:"reply_to_engagement_id,omitempty"`
+	// Bloco de custo (Frente A do plano de adaptação WhatsApp 2026) —
+	// PricingConfirmed=false enquanto o valor vem só da estimativa feita no
+	// envio (categoria do kind/template); vira true quando reconciliado com
+	// o webhook de status real. CostBRL é sempre calculado localmente
+	// (categoria x message_pricing_rates) — a Meta não devolve valor
+	// monetário, só a categoria.
+	PricingCategory  *PricingCategory `db:"pricing_category"  json:"pricing_category,omitempty"`
+	PricingBillable  *bool            `db:"pricing_billable"  json:"pricing_billable,omitempty"`
+	PricingModel     *string          `db:"pricing_model"     json:"pricing_model,omitempty"`
+	PricingConfirmed bool             `db:"pricing_confirmed" json:"pricing_confirmed"`
+	CostBRL          *float64         `db:"cost_brl"          json:"cost_brl,omitempty"`
+	CreatedAt        time.Time        `db:"created_at"        json:"created_at"`
+}
+
+// MessagePricingRate é a tabela de preço local (categoria -> BRL) usada pra
+// calcular Message.CostBRL — editável via API porque o rate card definitivo
+// da Meta só é confirmado perto de 1º/set/2026 (ver migration 000021).
+type MessagePricingRate struct {
+	Category  PricingCategory `db:"category"   json:"category"`
+	RateBRL   float64         `db:"rate_brl"   json:"rate_brl"`
+	Billable  bool            `db:"billable"   json:"billable"`
+	UpdatedAt time.Time       `db:"updated_at" json:"updated_at"`
+}
+
+type TemplateCategory string
+
+const (
+	TemplateCategoryMarketing      TemplateCategory = "marketing"
+	TemplateCategoryUtility        TemplateCategory = "utility"
+	TemplateCategoryAuthentication TemplateCategory = "authentication"
+)
+
+type TemplateApprovalStatus string
+
+const (
+	TemplateApprovalPending  TemplateApprovalStatus = "pending"
+	TemplateApprovalApproved TemplateApprovalStatus = "approved"
+	TemplateApprovalRejected TemplateApprovalStatus = "rejected"
+)
+
+// MessageTemplate é o catálogo próprio de templates WhatsApp aprovados na
+// Meta (docs/WHATSAPP-2026-ADAPTATION-PLAN.md, Frente B) — o backend passa a
+// ser fonte de verdade de categoria/variáveis/status, em vez de
+// Message.TemplateName ser só texto livre sem validação.
+type MessageTemplate struct {
+	ID             string                 `db:"id"               json:"id"`
+	Name           string                 `db:"name"             json:"name"`
+	Category       TemplateCategory       `db:"category"         json:"category"`
+	LanguageCode   string                 `db:"language_code"    json:"language_code"`
+	Body           string                 `db:"body"             json:"body"`
+	VariableCount  int                    `db:"variable_count"   json:"variable_count"`
+	ApprovalStatus TemplateApprovalStatus `db:"approval_status"  json:"approval_status"`
+	Active         bool                   `db:"active"           json:"active"`
+	CreatedAt      time.Time              `db:"created_at"       json:"created_at"`
+	UpdatedAt      time.Time              `db:"updated_at"       json:"updated_at"`
 }
 
 // PhoneVerification é a pendência de OTP de um número informado em IG/FB

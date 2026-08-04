@@ -28,6 +28,17 @@ type Repository interface {
 	CreateConversation(ctx context.Context, c entity.Conversation) error
 	UpdateConversationAfterMessage(ctx context.Context, id, preview string, at, windowExpiresAt time.Time) error
 	CreateMessage(ctx context.Context, msg entity.Message) (bool, error)
+	UpdateMessagePricing(ctx context.Context, metaMessageID string, status entity.MessageStatus, category *entity.PricingCategory, billable *bool, pricingModel *string, costBRL *float64) (bool, error)
+}
+
+// PricingReader é o subconjunto do usecase de pricing que a reconciliação de
+// status precisa pra converter a categoria reportada pela Meta num valor em
+// BRL (Frente A do plano de adaptação WhatsApp 2026) — mesma convenção de
+// Triage/Engagement acima. nil é aceito (ex.: testes que não montam
+// pricing) — a reconciliação de status/categoria segue funcionando, só sem
+// preencher cost_brl.
+type PricingReader interface {
+	GetRate(ctx context.Context, category entity.PricingCategory) (entity.MessagePricingRate, error)
 }
 
 // Triage é o subconjunto do usecase de triagem que a ingestão precisa —
@@ -49,10 +60,11 @@ type UseCase struct {
 	triage     Triage
 	engagement Engagement
 	sseHub     *sse.Hub
+	pricing    PricingReader
 }
 
-func New(repo Repository, triage Triage, engagement Engagement, sseHub *sse.Hub) *UseCase {
-	return &UseCase{repo: repo, triage: triage, engagement: engagement, sseHub: sseHub}
+func New(repo Repository, triage Triage, engagement Engagement, sseHub *sse.Hub, pricingReader PricingReader) *UseCase {
+	return &UseCase{repo: repo, triage: triage, engagement: engagement, sseHub: sseHub, pricing: pricingReader}
 }
 
 // IngestPayload faz o parse do payload cru (já com a assinatura HMAC
@@ -69,6 +81,12 @@ func (uc *UseCase) IngestPayload(ctx context.Context, channel entity.Channel, ra
 	switch channel {
 	case entity.ChannelWhatsApp:
 		messages, err = parseWhatsApp(rawBody)
+		// Reporte de custo (Frente A) é exclusivo do WhatsApp — Instagram/
+		// Facebook não têm o conceito de pricing.category da Cloud API. Roda
+		// mesmo se o parse de mensagens acima já tiver dado erro: são arrays
+		// independentes do mesmo payload ("messages" e "statuses"), um
+		// malformado não implica o outro estar.
+		uc.ingestStatuses(ctx, rawBody)
 	case entity.ChannelInstagram, entity.ChannelFacebook:
 		messages, err = parseMessaging(rawBody, channel)
 	default:
@@ -139,6 +157,42 @@ func (uc *UseCase) ingestEngagements(ctx context.Context, channel entity.Channel
 		if ierr := uc.engagement.IngestFromWebhook(ctx, e); ierr != nil {
 			log.Printf("webhook: failed to ingest engagement (channel=%s type=%s external_id=%s): %v",
 				ev.Channel, ev.Type, ev.ExternalID, ierr)
+		}
+	}
+}
+
+// ingestStatuses reconcilia status/custo real reportado pela Meta (Frente A
+// do plano de adaptação WhatsApp 2026) — best-effort igual ingestEngagements:
+// erro de parse ou de uma mensagem específica é só logado, nunca derruba a
+// ingestão da mensagem inbound que veio no mesmo payload.
+func (uc *UseCase) ingestStatuses(ctx context.Context, rawBody []byte) {
+	statuses, err := parseWhatsAppStatuses(rawBody)
+	if err != nil {
+		log.Printf("webhook: failed to parse statuses (channel=whatsapp): %v", err)
+		return
+	}
+
+	for _, s := range statuses {
+		status := entity.MessageStatus(s.Status)
+		var category *entity.PricingCategory
+		var costBRL *float64
+		if s.Category != nil {
+			c := entity.PricingCategory(*s.Category)
+			category = &c
+			if uc.pricing != nil {
+				if rate, rerr := uc.pricing.GetRate(ctx, c); rerr == nil {
+					cost := rate.RateBRL
+					costBRL = &cost
+				}
+			}
+		}
+		found, uerr := uc.repo.UpdateMessagePricing(ctx, s.MetaMessageID, status, category, s.Billable, s.PricingModel, costBRL)
+		if uerr != nil {
+			log.Printf("webhook: failed to update pricing for meta_message_id=%s: %v", s.MetaMessageID, uerr)
+			continue
+		}
+		if !found {
+			log.Printf("webhook: status event for unknown meta_message_id=%s — ignored", s.MetaMessageID)
 		}
 	}
 }
