@@ -28,8 +28,8 @@ const withPWA = withPWAInit({
 });
 
 const nextConfig: NextConfig = {
-  // Docker/self-host only — Vercel serves its own output format.
-  ...(process.env.VERCEL ? {} : { output: "standalone" as const }),
+  // Required for slim Docker images (copies only traced deps into .next/standalone).
+  output: "standalone",
   // Trace files from the monorepo root so workspace packages resolve correctly.
   outputFileTracingRoot: path.join(__dirname, ".."),
   compiler: {

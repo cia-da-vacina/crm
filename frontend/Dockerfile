@@ -3,7 +3,7 @@
 # CRM Cia da Vacina — frontend (Next.js) image.
 # Build context MUST be the monorepo root (workspaces + design-system packages).
 #
-#   docker compose build frontend
+#   docker compose --env-file .env.docker.example up --build -d
 #   docker build -f frontend/Dockerfile -t cia-vacina-frontend .
 
 ARG NODE_VERSION=20
@@ -29,11 +29,15 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/frontend/node_modules ./frontend/node_modules
 COPY . .
 
+ARG USE_MOCKS=true
+ARG COOKIE_SECURE=false
+ARG API_URL=http://backend:8080/api/v1
+
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-# Server-only vars used at build-time for validation; runtime overrides via compose.
-ENV API_URL=http://backend:8080/api/v1
-ENV COOKIE_SECURE=false
+ENV USE_MOCKS=$USE_MOCKS
+ENV COOKIE_SECURE=$COOKIE_SECURE
+ENV API_URL=$API_URL
 
 RUN npm run build
 
@@ -48,12 +52,10 @@ ENV HOSTNAME=0.0.0.0
 RUN addgroup --system --gid 1001 nodejs \
   && adduser --system --uid 1001 nextjs
 
-# Optional: used by compose healthcheck
 RUN apk add --no-cache wget
 
-# Standalone output (with outputFileTracingRoot = monorepo root) lands as:
+# Standalone output (outputFileTracingRoot = monorepo root) lands as:
 #   .next/standalone/frontend/server.js
-#   .next/standalone/node_modules/...
 COPY --from=builder /app/frontend/public ./frontend/public
 COPY --from=builder --chown=nextjs:nodejs /app/frontend/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/frontend/.next/static ./frontend/.next/static
@@ -61,5 +63,5 @@ COPY --from=builder --chown=nextjs:nodejs /app/frontend/.next/static ./frontend/
 USER nextjs
 EXPOSE 3000
 
-# Runtime secrets / API URL come from docker-compose / -e (never bake tokens here).
+# Runtime env (USE_MOCKS / API_URL / COOKIE_SECURE) comes from compose / -e.
 CMD ["node", "frontend/server.js"]

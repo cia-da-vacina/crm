@@ -1,14 +1,15 @@
-# CRM Cia da Vacina — local / server stack
+# CRM Cia da Vacina — local / server stack (Docker)
 #
-# Frontend is production-ready. Backend Go is not implemented yet (see backend/README.md);
-# the `backend` service is a placeholder profile so Felipe can plug the API in later.
+# Demo mode (default): frontend with in-process mocks — no Go API required.
+# When Felipe's API is ready, set USE_MOCKS=false and point API_URL at the backend.
 #
 # Usage:
-#   docker compose --env-file .env.docker.example up --build
-#   # ou copie para .env.docker e personalize:
-#   cp .env.docker.example .env.docker && docker compose --env-file .env.docker up --build
+#   docker compose --env-file .env.docker.example up --build -d
+#   # or customize:
+#   cp .env.docker.example .env.docker && docker compose --env-file .env.docker up --build -d
 #
 # App: http://localhost:3000
+# Login: admin@ciadavacina.com.br / admin123
 
 name: cia-vacina-crm
 
@@ -17,14 +18,18 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
+      args:
+        USE_MOCKS: ${USE_MOCKS:-true}
+        COOKIE_SECURE: ${COOKIE_SECURE:-false}
+        API_URL: ${API_URL:-http://backend:8080/api/v1}
     image: cia-vacina-frontend:local
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
     environment:
-      # BFF → API. When the Go API runs on the host: host.docker.internal.
-      # When the API is the compose `backend` service: http://backend:8080/api/v1
-      API_URL: ${API_URL:-http://host.docker.internal:8080/api/v1}
+      USE_MOCKS: ${USE_MOCKS:-true}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      # Ignored while USE_MOCKS=true
+      API_URL: ${API_URL:-http://backend:8080/api/v1}
       NODE_ENV: production
       PORT: "3000"
       HOSTNAME: "0.0.0.0"
@@ -42,9 +47,9 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 20s
+      start_period: 25s
 
-  # ─── Placeholder: enable with `docker compose --profile backend up` once Go API exists
+  # Enable later with: docker compose --profile backend up
   # backend:
   #   profiles: ["backend"]
   #   build:
@@ -55,30 +60,5 @@ services:
   #     - "${BACKEND_PORT:-8080}:8080"
   #   environment:
   #     ADDR: ":8080"
-  #     DATABASE_URL: postgres://crm:crm@postgres:5432/crm?sslmode=disable
   #     JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
-  #   depends_on:
-  #     postgres:
-  #       condition: service_healthy
   #   restart: unless-stopped
-  #
-  # postgres:
-  #   profiles: ["backend"]
-  #   image: postgres:16-alpine
-  #   environment:
-  #     POSTGRES_USER: crm
-  #     POSTGRES_PASSWORD: crm
-  #     POSTGRES_DB: crm
-  #   ports:
-  #     - "${POSTGRES_PORT:-5432}:5432"
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U crm -d crm"]
-  #     interval: 5s
-  #     timeout: 5s
-  #     retries: 10
-  #   restart: unless-stopped
-
-# volumes:
-#   postgres_data:
