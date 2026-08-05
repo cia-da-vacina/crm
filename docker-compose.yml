@@ -8,8 +8,9 @@
 #   # or customize:
 #   cp .env.docker.example .env.docker && docker compose --env-file .env.docker up --build -d
 #
-# App: http://localhost:3000
+# App: http://localhost:${FRONTEND_PORT:-3510}  (container :3000)
 # Login: admin@ciadavacina.com.br / admin123
+# Cloudflare Tunnel: public hostname → http://127.0.0.1:${FRONTEND_PORT:-3510}
 
 name: cia-vacina-crm
 
@@ -24,7 +25,8 @@ services:
         API_URL: ${API_URL:-http://backend:8080/api/v1}
     image: cia-vacina-frontend:local
     ports:
-      - "${FRONTEND_PORT:-3000}:3000"
+      # Same idea as NeoWeb prod ("3500:3000"): only the host port changes.
+      - "${FRONTEND_PORT:-3510}:3000"
     environment:
       USE_MOCKS: ${USE_MOCKS:-true}
       COOKIE_SECURE: ${COOKIE_SECURE:-false}

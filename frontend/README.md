@@ -11,8 +11,9 @@ cp .env.docker.example .env.docker
 docker compose --env-file .env.docker up --build -d
 ```
 
-App: http://localhost:3000  
-Login: `admin@ciadavacina.com.br` / `admin123` (mocks)
+App: http://localhost:3510 (`FRONTEND_PORT`, container `:3000`)  
+Login: `admin@ciadavacina.com.br` / `admin123` (mocks)  
+Cloudflare Tunnel → `http://127.0.0.1:3510`
 
 ## Local
 

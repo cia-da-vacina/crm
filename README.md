@@ -18,10 +18,28 @@ docker compose --env-file .env.docker up --build -d
 # ou: npm run docker:up
 ```
 
-- App: http://localhost:3000
+- App: http://localhost:3510 (container interno sempre `:3000`, igual NeoWeb prod `3500:3000`)
 - Por padrão `USE_MOCKS=true` — UI completa **sem** API Go
 - Login demo: `admin@ciadavacina.com.br` / `admin123`
 - Parar: `docker compose down` / `npm run docker:down`
+
+### VPS + Cloudflare Tunnel
+
+A VPS já usa a porta 3000 → não remapear o host para 3000. No `.env.docker`:
+
+```env
+FRONTEND_PORT=3510
+COOKIE_SECURE=true
+```
+
+No Cloudflare Zero Trust → Networks → Tunnels → Public Hostname:
+
+| Campo | Valor |
+|---|---|
+| Service type | HTTP |
+| URL | `http://127.0.0.1:3510` |
+
+O tunnel aponta para o host da VPS; o Docker só precisa publicar `3510:3000`.
 
 Quando a API do Felipe estiver pronta, no `.env.docker`:
 
