@@ -21,7 +21,8 @@ COPY packages/styled-system/package.json ./packages/styled-system/
 COPY packages/design-system-tokens/package.json ./packages/design-system-tokens/
 COPY packages/icon-system/package.json ./packages/icon-system/
 COPY packages/design-system/package.json ./packages/design-system/
-RUN npm ci
+# Workspaces only — never git+ssh. Ignore lifecycle scripts (no src yet in this stage).
+RUN npm ci --ignore-scripts
 
 # ─── Build ───────────────────────────────────────────────────────────────────
 FROM base AS builder

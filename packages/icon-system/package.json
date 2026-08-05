@@ -21,8 +21,7 @@
     "import:untitled-ui": "node scripts/import-untitled-ui-icons.mjs",
     "build": "tsup src/index.ts --format esm,cjs --dts --clean --external react --external styled-components --external @cia-da-vacina/styled-system",
     "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
-    "prepublishOnly": "npm run build",
-    "prepare": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "@cia-da-vacina/styled-system": ">=0.1.0",
