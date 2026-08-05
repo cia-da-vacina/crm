@@ -26,8 +26,8 @@ RUN npm ci --ignore-scripts
 
 # ─── Build ───────────────────────────────────────────────────────────────────
 FROM base AS builder
+# npm workspaces hoist deps to root — no per-package node_modules required
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/frontend/node_modules ./frontend/node_modules
 COPY . .
 
 ARG USE_MOCKS=true
