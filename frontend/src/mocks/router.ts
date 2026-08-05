@@ -85,8 +85,29 @@ function match(
 }
 
 function toInboxItem(c: ConversationDetail) {
-  const { customer: _customer, created_at: _ca, updated_at: _ua, ...summary } = c;
-  return summary;
+  return {
+    id: c.id,
+    customer_id: c.customer_id,
+    customer_name: c.customer_name,
+    customer_phone: c.customer_phone,
+    identification: c.identification,
+    phone_gate: c.phone_gate,
+    pending_phone_masked: c.pending_phone_masked,
+    channel: c.channel,
+    channel_thread_id: c.channel_thread_id,
+    unit_id: c.unit_id,
+    pipeline_stage: c.pipeline_stage,
+    mode: c.mode,
+    status: c.status,
+    owner_id: c.owner_id,
+    intent: c.intent,
+    ai_summary: c.ai_summary,
+    triage_notes: c.triage_notes,
+    last_message_preview: c.last_message_preview,
+    last_message_at: c.last_message_at,
+    window_expires_at: c.window_expires_at,
+    unread_count: c.unread_count,
+  };
 }
 
 export function routeMockRequest(req: MockRequest): MockResponse {
@@ -103,7 +124,6 @@ export function routeMockRequest(req: MockRequest): MockResponse {
     if (!expected || body.password !== expected) {
       return error(401, "unauthorized", "Credenciais inválidas");
     }
-    const user = email === mockAdmin.email ? mockAdmin : authUser;
     const resolved =
       email === mockAdmin.email
         ? mockAdmin
