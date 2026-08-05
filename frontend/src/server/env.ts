@@ -11,6 +11,11 @@ export interface ServerEnv {
   API_URL: string;
   /** Whether auth cookies are marked `Secure`. Must be `true` behind HTTPS. */
   COOKIE_SECURE: boolean;
+  /**
+   * When true, BFF routes serve fixtures from `src/mocks/` and never call
+   * `API_URL`. For local UI / Vercel demo without a real backend.
+   */
+  USE_MOCKS: boolean;
 }
 
 const DEFAULT_API_URL = "http://localhost:8080/api/v1";
@@ -35,7 +40,7 @@ function parseBoolean(value: string | undefined, fallback: boolean): boolean {
  * Reads and validates server-side environment configuration. Result is
  * cached for the lifetime of the process/lambda.
  *
- * @throws {Error} if `API_URL` is missing while running in production.
+ * @throws {Error} if `API_URL` is missing while running in production without mocks.
  */
 export function getEnv(): ServerEnv {
   assertServerOnly();
@@ -43,13 +48,14 @@ export function getEnv(): ServerEnv {
   if (cached) return cached;
 
   const isProduction = process.env.NODE_ENV === "production";
+  const USE_MOCKS = parseBoolean(process.env.USE_MOCKS, false);
   const rawApiUrl = process.env.API_URL?.trim();
 
-  if (!rawApiUrl && isProduction) {
+  if (!rawApiUrl && isProduction && !USE_MOCKS) {
     throw new Error(
       "[server/env] Missing required environment variable API_URL in " +
         "production. Set it to the backend base URL, e.g. " +
-        "https://api.ciadavacina.com.br/api/v1.",
+        "https://api.ciadavacina.com.br/api/v1 — or set USE_MOCKS=true for demo.",
     );
   }
 
@@ -60,7 +66,7 @@ export function getEnv(): ServerEnv {
 
   const COOKIE_SECURE = parseBoolean(process.env.COOKIE_SECURE, isProduction);
 
-  cached = { API_URL, COOKIE_SECURE };
+  cached = { API_URL, COOKIE_SECURE, USE_MOCKS };
   return cached;
 }
 

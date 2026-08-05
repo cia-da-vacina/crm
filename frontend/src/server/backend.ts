@@ -1,4 +1,5 @@
 import type { ApiErrorBody } from "@/domain/api";
+import { handleMockRequest } from "@/mocks";
 import { getEnv } from "./env";
 
 /** Error thrown by `backendFetch` for any non-2xx/204 response, or network failure. */
@@ -36,6 +37,30 @@ export async function backendFetch<T>(
 ): Promise<T> {
   const { token, headers: initHeaders, ...rest } = init;
   const env = getEnv();
+
+  if (env.USE_MOCKS) {
+    const mockPath = path.startsWith("/") ? path : `/${path}`;
+    const mock = handleMockRequest({
+      method: (rest.method as string | undefined) ?? "GET",
+      path: mockPath,
+      body: typeof rest.body === "string" ? rest.body : undefined,
+      token,
+    });
+    if (!mock) {
+      throw new BackendError(404, "not_found", `Mock sem rota para ${mockPath}`);
+    }
+    if (mock.status === 204) return undefined as T;
+    if (mock.status >= 400) {
+      const body = (mock.body ?? {}) as Partial<ApiErrorBody>;
+      throw new BackendError(
+        mock.status,
+        body.code ?? "unknown_error",
+        body.message ?? `Erro mock (status ${mock.status}).`,
+      );
+    }
+    return mock.body as T;
+  }
+
   const url = buildUrl(env.API_URL, path);
 
   const headers = new Headers(initHeaders);

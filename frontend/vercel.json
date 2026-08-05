@@ -1,3 +1,5 @@
 {
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "installCommand": "cd .. && npm ci",
+  "buildCommand": "cd .. && npm run build -w @cia-da-vacina/styled-system && npm run build -w @cia-da-vacina/design-system-tokens && npm run build -w @cia-da-vacina/icon-system && npm run build -w @cia-da-vacina/design-system && npm run build -w frontend"
 }

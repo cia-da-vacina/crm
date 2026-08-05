@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { ApiErrorBody } from "@/domain/api";
+import { handleMockRequest } from "@/mocks";
 import { getAccessToken } from "@/server/cookies";
 import { getEnv } from "@/server/env";
 import { refreshSession } from "@/server/refresh-session";
@@ -90,6 +91,25 @@ async function proxy(request: Request, context: RouteContext): Promise<NextRespo
   }
 
   const token = await getAccessToken();
+
+  const env = getEnv();
+  if (env.USE_MOCKS) {
+    const mock = handleMockRequest({
+      method: request.method,
+      path: backendPath,
+      search,
+      body: requestBody,
+      token,
+    });
+    if (!mock) {
+      const body: ApiErrorBody = {
+        code: "not_found",
+        message: `Mock sem rota para ${request.method} ${backendPath}`,
+      };
+      return NextResponse.json(body, { status: 404 });
+    }
+    return toResponse({ status: mock.status, body: mock.body });
+  }
 
   try {
     let result = await callBackend(backendPath, search, request.method, requestBody, token);
